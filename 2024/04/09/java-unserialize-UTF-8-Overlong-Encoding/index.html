@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang=cn>
+<html lang=en>
 <head>
     <!-- so meta -->
     <meta charset="utf-8">
@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://example.com/2024/04/09/java-unserialize-UTF-8-Overlong-Encoding/index.html">
 <meta property="og:site_name" content="N1ght">
 <meta property="og:description" content="参考文章：https:&#x2F;&#x2F;www.leavesongs.com&#x2F;PENETRATION&#x2F;utf-8-overlong-encoding.htmlhttps:&#x2F;&#x2F;exp10it.io&#x2F;2024&#x2F;02&#x2F;hessian-utf-8-overlong-encoding&#x2F; 在java反序列化中，readUTF函数存在对三个字节进行转换成字符串我们可以将敏感字节，从一个字节转换成三个字节，原理可以参考UTF-">
-<meta property="og:locale">
+<meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240406131110-1712629601627-10-1712629646395-1-1712629879887-1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240406131253-1712629601627-11-1712629646395-2-1712629879888-2.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240406131601-1712629601628-12-1712629646395-3-1712629879888-3.png">
@@ -70,20 +70,20 @@
 <body class="max-width mx-auto px3 ltr">
     
       <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="القائمة"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="القائمة"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="الأعلى" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
   <span id="menu">
     <span id="nav">
       <ul>
         <!--
-       --><li><a href="/">الرئيسية</a></li><!--
+       --><li><a href="/">Home</a></li><!--
      --><!--
-       --><li><a href="/about/">معلومات عنّي</a></li><!--
+       --><li><a href="/about/">About</a></li><!--
      --><!--
-       --><li><a href="/archives/">منشورات</a></li><!--
+       --><li><a href="/archives/">Writing</a></li><!--
      --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">مشاريع</a></li><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">Projects</a></li><!--
      -->
       </ul>
     </span>
@@ -92,13 +92,13 @@
       <ul>
         
         
-        <li><a class="icon" aria-label="العودة إلى الأعلى" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="مشاركة المنشور" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">المنشور السابق</span>
-      <span id="i-next" class="info" style="display:none;">المنشور التالي</span>
-      <span id="i-top" class="info" style="display:none;">العودة إلى الأعلى</span>
-      <span id="i-share" class="info" style="display:none;">مشاركة المنشور</span>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
     </span>
     <br/>
     <div id="share" style="display: none">
@@ -195,13 +195,13 @@
     <div id="nav-footer" style="display: none">
       <ul>
         
-          <li><a href="/">الرئيسية</a></li>
+          <li><a href="/">Home</a></li>
         
-          <li><a href="/about/">معلومات عنّي</a></li>
+          <li><a href="/about/">About</a></li>
         
-          <li><a href="/archives/">منشورات</a></li>
+          <li><a href="/archives/">Writing</a></li>
         
-          <li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">مشاريع</a></li>
+          <li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">Projects</a></li>
         
       </ul>
     </div>
@@ -231,12 +231,12 @@
     </div>
 
     <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> القائمة</a>
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
         
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> المحتويات</a>
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
         
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> مشاركة</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> العودة إلى الأعلى</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
   </div>
@@ -245,7 +245,7 @@
         
         <footer id="footer">
   <div class="footer-left">
-    حقوق النشر &copy;
+    Copyright &copy;
     
     
     2016-2024
@@ -255,13 +255,13 @@
     <nav>
       <ul>
         <!--
-       --><li><a href="/">الرئيسية</a></li><!--
+       --><li><a href="/">Home</a></li><!--
      --><!--
-       --><li><a href="/about/">معلومات عنّي</a></li><!--
+       --><li><a href="/about/">About</a></li><!--
      --><!--
-       --><li><a href="/archives/">منشورات</a></li><!--
+       --><li><a href="/archives/">Writing</a></li><!--
      --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">مشاريع</a></li><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">Projects</a></li><!--
      -->
       </ul>
     </nav>
@@ -291,7 +291,7 @@
   <script type="text/javascript">
   $(function() {
     // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"انسخ!\">";
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
     btn += '<i class="fa-regular fa-clone"></i>';
     btn += '</span>';
     // mount it!
@@ -302,7 +302,7 @@
       }
     });
     clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "تم النسخ!");
+      e.trigger.setAttribute('aria-label', "Copied!");
       e.clearSelection();
     })
   })
