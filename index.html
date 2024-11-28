@@ -87,7 +87,9 @@
 </header>
 
         
-        <section id="about" class="p-note">
+        <link rel="stylesheet" href="css/style.css">
+
+<section id="about" class="p-note">
   
   
     <p>
@@ -107,7 +109,15 @@
     </p>
   
 </section>
-
+<section id="search">
+  <span class="h1">搜索</span>
+  <form>
+    <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+  </form>
+  <div id="search-result"></div>
+  <p class="search-no-result">抱歉，没有符合您搜索条件的结果。请换其它关键词再试。</p>
+</section>
+  
 <section id="writing">
   <span class="h1"><a href="/archives/">文章</a></span>
   
@@ -335,11 +345,11 @@
 
 
 <section id="projects">
-  <span class="h1"><a target="_blank" rel="noopener" href="https://xmcve.com/">项目</a></span>
+  <span class="h1"><a target="_blank" rel="noopener" href="https://xmcve.com/">招新</a></span>
   <ul class="project-list">
     
       <li class="project-item">
-        <a target="_blank" rel="noopener" href="https://xmcve.com/">星盟安全团队</a>: <p>热衷于网络安全，渴望用技术去改变世界，致力于成为顶级的网络安全实验室。<br>星盟安全团队长期招新<br>简历格式：<br>ID、联系方式、掌握技术、比赛情况<br>简历投递邮箱：<a href="mailto:&#120;&#109;&#99;&#118;&#x65;&#64;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#120;&#109;&#99;&#118;&#x65;&#64;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a><br>联系QQ：1609410364</p>
+        <a target="_blank" rel="noopener" href="https://xmcve.com/">星盟安全团队</a>: <p>热衷于网络安全，渴望用技术去改变世界，致力于成为顶级的网络安全实验室。<br>星盟安全团队长期招新<br>简历格式：<br>ID、联系方式、掌握技术、比赛情况<br>简历投递邮箱：<a href="mailto:&#120;&#x6d;&#x63;&#x76;&#101;&#x40;&#113;&#x71;&#x2e;&#x63;&#x6f;&#x6d;">&#120;&#x6d;&#x63;&#x76;&#101;&#x40;&#113;&#x71;&#x2e;&#x63;&#x6f;&#x6d;</a><br>联系QQ：1609410364</p>
 
       </li>
     
@@ -347,6 +357,87 @@
 </section>
 
 
+<link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+<!-- jquery -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+
+<script src="js/search.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+
+    var $inputArea = $("input#search-input");
+    var $resultArea = document.querySelector("div#search-result");
+
+    $inputArea.focus(function() {
+      var search_path = "search.xml";
+      if (search_path.length == 0) {
+        search_path = "search.xml";
+      }
+      var path = "/" + search_path;
+      searchFunc(path, 'search-input', 'search-result');
+    });
+
+    $inputArea.keydown(function(e) {
+      if (e.which == 13) {
+        e.preventDefault();
+      }
+    });
+
+    var observer = new MutationObserver(function(mutationsList, observer) {
+      if (mutationsList.length == 1) {
+        if (mutationsList[0].addedNodes.length) {
+          $(".search-no-result").hide();
+        } else if (mutationsList[0].removedNodes.length) {
+          $(".search-no-result").show(200);
+        }
+      }
+    });
+
+    observer.observe($resultArea, { childList: true });
+
+  });
+  </script>
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?adec00eac37a4f07fb02d0f478140978";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+<style>
+  .search-input {
+    width: 80%;                   /* 让输入框自适应宽度 */
+    padding: 10px 15px;            /* 内边距，增加输入框的可操作区域 */
+    font-size: 16px;               /* 设置字体大小 */
+    font-family: Arial, sans-serif; /* 设置字体 */
+    border: 1px solid #ccc;        /* 设置边框 */
+    border-radius: 10px;           /* 设置圆角 */
+    outline: none;                 /* 去除默认的聚焦边框 */
+    background-color: #f8f8f8;     /* 背景色 */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* 添加过渡效果 */
+}
+
+.search-input:focus {
+    border-color: #007bff;         /* 聚焦时改变边框颜色 */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* 聚焦时添加阴影效果 */
+}
+
+.search-input::placeholder {
+    color: #888;                   /* 占位符颜色 */
+    font-style: italic;             /* 占位符字体样式 */
+}
+
+</style>
         
         <footer id="footer">
       <div class="footer-left">
