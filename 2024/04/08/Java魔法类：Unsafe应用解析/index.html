@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="引用文章 基本介绍可以通过getUnsafe获取，但是源码这边会出现问题 1234567891011121314151617181920212223242526272829public final class Unsafe &#123;        static &#123;          Reflection.registerMethodsToFilter(Unsafe.class, Se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java魔法类：Unsafe应用解析">
+<meta property="og:url" content="http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="n1ght的个人主页">
+<meta property="og:description" content="引用文章 基本介绍可以通过getUnsafe获取，但是源码这边会出现问题 1234567891011121314151617181920212223242526272829public final class Unsafe &#123;        static &#123;          Reflection.registerMethodsToFilter(Unsafe.class, Se">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-08T10:26:32.000Z">
+<meta property="article:modified_time" content="2024-04-27T12:52:14.012Z">
+<meta property="article:author" content="N1ght">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="ctf-trick">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Java魔法类：Unsafe应用解析</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2024/04/09/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96UTF-8%20Overlong%20Encoding/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&text=Java魔法类：Unsafe应用解析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&is_video=false&description=Java魔法类：Unsafe应用解析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java魔法类：Unsafe应用解析&body=Check out this article: http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&name=Java魔法类：Unsafe应用解析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&t=Java魔法类：Unsafe应用解析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">基本介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%93%8D%E4%BD%9C"><span class="toc-number">1.1.</span> <span class="toc-text">内存操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Class%E7%9B%B8%E5%85%B3"><span class="toc-number">1.2.</span> <span class="toc-text">Class相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.</span> <span class="toc-text">对象操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo"><span class="toc-number">1.4.</span> <span class="toc-text">Demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8UnSafe%E7%BB%95%E8%BF%87jdk17%E5%AF%B9%E5%8F%8D%E5%B0%84%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-number">1.5.</span> <span class="toc-text">利用UnSafe绕过jdk17对反射的限制</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Java魔法类：Unsafe应用解析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">N1ght</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-04-08T10:26:32.000Z" class="dt-published" itemprop="datePublished">2024-04-08</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/ctf-trick/" rel="tag">ctf-trick</a>, <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2019/02/14/talk-about-java-magic-class-unsafe.html">引用文章</a></p>
+<h1 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h1><p>可以通过getUnsafe获取，但是源码这边会出现问题</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">Unsafe</span> &#123;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">static</span> &#123;  </span><br><span class="line">        Reflection.registerMethodsToFilter(Unsafe.class, Set.of(<span class="string">&quot;getUnsafe&quot;</span>));  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Unsafe</span><span class="params">()</span> &#123;&#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Unsafe</span> <span class="variable">theUnsafe</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Unsafe</span>();  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> jdk.internal.misc.<span class="type">Unsafe</span> <span class="variable">theInternalUnsafe</span> <span class="operator">=</span> jdk.internal.misc.Unsafe.getUnsafe();  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">/**  </span></span><br><span class="line"><span class="comment">     * Provides the caller with the capability of performing unsafe     * operations.     *     * &lt;p&gt;The returned &#123;<span class="doctag">@code</span> Unsafe&#125; object should be carefully guarded  </span></span><br><span class="line"><span class="comment">     * by the caller, since it can be used to read and write data at arbitrary     * memory addresses.  It must never be passed to untrusted code.     *     * &lt;p&gt;Most methods in this class are very low-level, and correspond to a  </span></span><br><span class="line"><span class="comment">     * small number of hardware instructions (on typical machines).  Compilers     * are encouraged to optimize these methods accordingly.     *     * &lt;p&gt;Here is a suggested idiom for using unsafe operations:  </span></span><br><span class="line"><span class="comment">     *     * &lt;pre&gt; &#123;<span class="doctag">@code</span>  </span></span><br><span class="line"><span class="comment">     * class MyTrustedClass &#123;  </span></span><br><span class="line"><span class="comment">     *   private static final Unsafe unsafe = Unsafe.getUnsafe();     *   ...     *   private long myCountAddress = ...;     *   public int getCount() &#123; return unsafe.getByte(myCountAddress); &#125;     * &#125;&#125;&lt;/pre&gt;  </span></span><br><span class="line"><span class="comment">     *  </span></span><br><span class="line"><span class="comment">     * (It may assist compilers to make the local variable &#123;<span class="doctag">@code</span> final&#125;.)  </span></span><br><span class="line"><span class="comment">     *     * <span class="doctag">@throws</span>  SecurityException if the class loader of the caller  </span></span><br><span class="line"><span class="comment">     *          class is not in the system domain in which all permissions     *          are granted.     */</span>    <span class="meta">@CallerSensitive</span>  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Unsafe <span class="title function_">getUnsafe</span><span class="params">()</span> &#123;  </span><br><span class="line">        Class&lt;?&gt; caller = Reflection.getCallerClass();  </span><br><span class="line">        <span class="keyword">if</span> (!VM.isSystemDomainLoader(caller.getClassLoader()))  </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Unsafe&quot;</span>);  </span><br><span class="line">        <span class="keyword">return</span> theUnsafe;  </span><br><span class="line">    &#125;</span><br><span class="line">    ......</span><br></pre></td></tr></table></figure>
+<p>我们可以通过反射获取unsafe</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; name = Class.forName(<span class="string">&quot;sun.misc.Unsafe&quot;</span>);</span><br><span class="line"><span class="type">Field</span> <span class="variable">theUnsafe</span> <span class="operator">=</span> name.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);</span><br><span class="line">theUnsafe.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">Unsafe</span> <span class="variable">unsafe</span> <span class="operator">=</span> (Unsafe) theUnsafe.get(<span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="内存操作"><a href="#内存操作" class="headerlink" title="内存操作"></a>内存操作</h2><p>这部分主要包含堆外内存的分配、拷贝、释放、给定地址值操作等方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分配内存, 相当于C++的malloc函数</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="type">long</span> <span class="title function_">allocateMemory</span><span class="params">(<span class="type">long</span> bytes)</span>;</span><br><span class="line"><span class="comment">//扩充内存</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="type">long</span> <span class="title function_">reallocateMemory</span><span class="params">(<span class="type">long</span> address, <span class="type">long</span> bytes)</span>;</span><br><span class="line"><span class="comment">//释放内存</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">freeMemory</span><span class="params">(<span class="type">long</span> address)</span>;</span><br><span class="line"><span class="comment">//在给定的内存块中设置值</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">setMemory</span><span class="params">(Object o, <span class="type">long</span> offset, <span class="type">long</span> bytes, <span class="type">byte</span> value)</span>;</span><br><span class="line"><span class="comment">//内存拷贝</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">copyMemory</span><span class="params">(Object srcBase, <span class="type">long</span> srcOffset, Object destBase, <span class="type">long</span> destOffset, <span class="type">long</span> bytes)</span>;</span><br><span class="line"><span class="comment">//获取给定地址值，忽略修饰限定符的访问限制。与此类似操作还有: getInt，getDouble，getLong，getChar等</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title function_">getObject</span><span class="params">(Object o, <span class="type">long</span> offset)</span>;</span><br><span class="line"><span class="comment">//为给定地址设置值，忽略修饰限定符的访问限制，与此类似操作还有: putInt,putDouble，putLong，putChar等</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">putObject</span><span class="params">(Object o, <span class="type">long</span> offset, Object x)</span>;</span><br><span class="line"><span class="comment">//获取给定地址的byte类型的值（当且仅当该内存地址为allocateMemory分配时，此方法结果为确定的）</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="type">byte</span> <span class="title function_">getByte</span><span class="params">(<span class="type">long</span> address)</span>;</span><br><span class="line"><span class="comment">//为给定地址设置byte类型的值（当且仅当该内存地址为allocateMemory分配时，此方法结果才是确定的）</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">putByte</span><span class="params">(<span class="type">long</span> address, <span class="type">byte</span> x)</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="Class相关"><a href="#Class相关" class="headerlink" title="Class相关"></a>Class相关</h2><p>此部分主要提供Class和它的静态字段的操作相关方法，包含静态字段内存定位、定义类、定义匿名类、检验&amp;确保初始化等。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取给定静态字段的内存地址偏移量，这个值对于给定的字段是唯一且固定不变的</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="type">long</span> <span class="title function_">staticFieldOffset</span><span class="params">(Field f)</span>;</span><br><span class="line"><span class="comment">//获取一个静态类中给定字段的对象指针</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title function_">staticFieldBase</span><span class="params">(Field f)</span>;</span><br><span class="line"><span class="comment">//判断是否需要初始化一个类，通常在获取一个类的静态属性的时候（因为一个类如果没初始化，它的静态属性也不会初始化）使用。 当且仅当ensureClassInitialized方法不生效时返回false。</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="type">boolean</span> <span class="title function_">shouldBeInitialized</span><span class="params">(Class&lt;?&gt; c)</span>;</span><br><span class="line"><span class="comment">//检测给定的类是否已经初始化。通常在获取一个类的静态属性的时候（因为一个类如果没初始化，它的静态属性也不会初始化）使用。</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">ensureClassInitialized</span><span class="params">(Class&lt;?&gt; c)</span>;</span><br><span class="line"><span class="comment">//定义一个类，此方法会跳过JVM的所有安全检查，默认情况下，ClassLoader（类加载器）和ProtectionDomain（保护域）实例来源于调用者</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> Class&lt;?&gt; defineClass(String name, <span class="type">byte</span>[] b, <span class="type">int</span> off, <span class="type">int</span> len, ClassLoader loader, ProtectionDomain protectionDomain);</span><br><span class="line"><span class="comment">//定义一个匿名类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> Class&lt;?&gt; defineAnonymousClass(Class&lt;?&gt; hostClass, <span class="type">byte</span>[] data, Object[] cpPatches);</span><br></pre></td></tr></table></figure>
+<h2 id="对象操作"><a href="#对象操作" class="headerlink" title="对象操作"></a>对象操作</h2><p>此部分主要包含对象成员属性相关操作及非常规的对象实例化方式等相关方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回对象成员属性在内存地址相对于此对象的内存地址的偏移量</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="type">long</span> <span class="title function_">objectFieldOffset</span><span class="params">(Field f)</span>;</span><br><span class="line"><span class="comment">//获得给定对象的指定地址偏移量的值，与此类似操作还有：getInt，getDouble，getLong，getChar等</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title function_">getObject</span><span class="params">(Object o, <span class="type">long</span> offset)</span>;</span><br><span class="line"><span class="comment">//给定对象的指定地址偏移量设值，与此类似操作还有：putInt，putDouble，putLong，putChar等</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">putObject</span><span class="params">(Object o, <span class="type">long</span> offset, Object x)</span>;</span><br><span class="line"><span class="comment">//从对象的指定偏移量处获取变量的引用，使用volatile的加载语义</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title function_">getObjectVolatile</span><span class="params">(Object o, <span class="type">long</span> offset)</span>;</span><br><span class="line"><span class="comment">//存储变量的引用到对象的指定的偏移量处，使用volatile的存储语义</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">putObjectVolatile</span><span class="params">(Object o, <span class="type">long</span> offset, Object x)</span>;</span><br><span class="line"><span class="comment">//有序、延迟版本的putObjectVolatile方法，不保证值的改变被其他线程立即看到。只有在field被volatile修饰符修饰时有效</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">putOrderedObject</span><span class="params">(Object o, <span class="type">long</span> offset, Object x)</span>;</span><br><span class="line"><span class="comment">//绕过构造方法、初始化代码来创建对象</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title function_">allocateInstance</span><span class="params">(Class&lt;?&gt; cls)</span> <span class="keyword">throws</span> InstantiationException;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;  </span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;  </span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;  </span><br><span class="line"><span class="keyword">import</span> javassist.*;  </span><br><span class="line"><span class="keyword">import</span> sun.misc.Unsafe;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> java.io.IOException;  </span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;  </span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;  </span><br><span class="line">        Class&lt;?&gt; name = Class.forName(<span class="string">&quot;sun.misc.Unsafe&quot;</span>);  </span><br><span class="line">        <span class="type">Field</span> <span class="variable">theUnsafe</span> <span class="operator">=</span> name.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);  </span><br><span class="line">        theUnsafe.setAccessible(<span class="literal">true</span>);  </span><br><span class="line">        <span class="type">Unsafe</span> <span class="variable">unsafe</span> <span class="operator">=</span> (Unsafe) theUnsafe.get(<span class="literal">null</span>);  </span><br><span class="line">        TemplatesImpl templates= (TemplatesImpl) unsafe.allocateInstance(TemplatesImpl.class);  </span><br><span class="line">        <span class="type">Field</span> <span class="variable">name1</span> <span class="operator">=</span> templates.getClass().getDeclaredField(<span class="string">&quot;_name&quot;</span>);  </span><br><span class="line">        unsafe.putObject(templates,unsafe.objectFieldOffset(name1),<span class="string">&quot;n1ght&quot;</span>);  </span><br><span class="line">        <span class="type">Field</span> <span class="variable">tfactory</span> <span class="operator">=</span> templates.getClass().getDeclaredField(<span class="string">&quot;_tfactory&quot;</span>);  </span><br><span class="line">        unsafe.putObject(templates,unsafe.objectFieldOffset(tfactory),<span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());  </span><br><span class="line">        <span class="type">Field</span> <span class="variable">bytecodes</span> <span class="operator">=</span> templates.getClass().getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);  </span><br><span class="line">        unsafe.putObject(templates,unsafe.objectFieldOffset(bytecodes),<span class="keyword">new</span> <span class="title class_">byte</span>[][]&#123;getPayload()&#125;);  </span><br><span class="line">        templates.getOutputProperties();  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] getPayload() <span class="keyword">throws</span> NotFoundException, CannotCompileException, IOException &#123;  </span><br><span class="line">        String s=<span class="string">&quot;public MyClassLoader()&#123;Runtime.getRuntime().exec(\&quot;calc\&quot;);&#125;&quot;</span>;  </span><br><span class="line">        <span class="type">ClassPool</span> <span class="variable">classPool</span> <span class="operator">=</span> ClassPool.getDefault();  </span><br><span class="line">        classPool.importPackage(Scanner.class.getName());  </span><br><span class="line">        <span class="type">CtClass</span> <span class="variable">ctClass</span> <span class="operator">=</span> classPool.get(AbstractTranslet.class.getName());  </span><br><span class="line">        <span class="type">CtClass</span> <span class="variable">calc</span> <span class="operator">=</span> classPool.makeClass(<span class="string">&quot;MyClassLoader&quot;</span>);  </span><br><span class="line">        calc.setSuperclass(ctClass);  </span><br><span class="line">        <span class="type">CtConstructor</span> <span class="variable">ctConstructor</span> <span class="operator">=</span> CtNewConstructor.make(s, calc);  </span><br><span class="line">        calc.addConstructor(ctConstructor);  </span><br><span class="line">        <span class="keyword">return</span> calc.toBytecode();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="利用UnSafe绕过jdk17对反射的限制"><a href="#利用UnSafe绕过jdk17对反射的限制" class="headerlink" title="利用UnSafe绕过jdk17对反射的限制"></a>利用UnSafe绕过jdk17对反射的限制</h2><p><a target="_blank" rel="noopener" href="https://pankas.top/2023/12/05/jdk17-%E5%8F%8D%E5%B0%84%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87/#%E5%88%A9%E7%94%A8Unsafe%E7%BB%95%E8%BF%87JDK17-%E5%AF%B9%E5%8F%8D%E5%B0%84%E7%9A%84%E9%99%90%E5%88%B6">https://pankas.top/2023/12/05/jdk17-%E5%8F%8D%E5%B0%84%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87/#%E5%88%A9%E7%94%A8Unsafe%E7%BB%95%E8%BF%87JDK17-%E5%AF%B9%E5%8F%8D%E5%B0%84%E7%9A%84%E9%99%90%E5%88%B6</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">unsafeClass</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.misc.Unsafe&quot;</span>);</span><br><span class="line"><span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> unsafeClass.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);</span><br><span class="line">field.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">Unsafe</span> <span class="variable">unsafe</span> <span class="operator">=</span> (Unsafe) field.get(<span class="literal">null</span>);</span><br><span class="line"><span class="type">Module</span> <span class="variable">baseModule</span> <span class="operator">=</span> Object.class.getModule();</span><br><span class="line"><span class="type">Class</span> <span class="variable">currentClass</span> <span class="operator">=</span> Main.class;</span><br><span class="line"><span class="type">long</span> <span class="variable">addr</span> <span class="operator">=</span> unsafe.objectFieldOffset(Class.class.getDeclaredField(<span class="string">&quot;module&quot;</span>));</span><br><span class="line">unsafe.getAndSetObject(currentClass, addr, baseModule);</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/about/">关于</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">基本介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%93%8D%E4%BD%9C"><span class="toc-number">1.1.</span> <span class="toc-text">内存操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Class%E7%9B%B8%E5%85%B3"><span class="toc-number">1.2.</span> <span class="toc-text">Class相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.</span> <span class="toc-text">对象操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo"><span class="toc-number">1.4.</span> <span class="toc-text">Demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8UnSafe%E7%BB%95%E8%BF%87jdk17%E5%AF%B9%E5%8F%8D%E5%B0%84%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-number">1.5.</span> <span class="toc-text">利用UnSafe绕过jdk17对反射的限制</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&text=Java魔法类：Unsafe应用解析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&is_video=false&description=Java魔法类：Unsafe应用解析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java魔法类：Unsafe应用解析&body=Check out this article: http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&title=Java魔法类：Unsafe应用解析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&name=Java魔法类：Unsafe应用解析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/&t=Java魔法类：Unsafe应用解析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+      <div class="footer-left">
+        Copyright &copy;
+        
+        
+        2024
+        N1ght
+      </div>
+      <div class="footer-right">
+        <nav>
+          <ul>
+            <!--
+          --><li><a href="/">首页</a></li><!--
+        --><!--
+          --><li><a href="/about/">关于</a></li><!--
+        --><!--
+          --><li><a href="/search/">搜索</a></li><!--
+        --><!--
+          --><li><a href="/archives/">归档</a></li><!--
+        --><!--
+          --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li><!--
+        -->
+          </ul>
+          <ul>
+            
+              <!-- 不蒜子统计 -->
+              <span id="busuanzi_container_site_pv">
+                  本站总访问量<span id="busuanzi_value_site_pv"></span>次
+              </span>
+              <span class="post-meta-divider">|</span>
+              <span id="busuanzi_container_site_uv" style='display:none'>
+                      本站访客数<span id="busuanzi_value_site_uv"></span>人
+              </span>
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            
+          </ul>
+        </nav>
+      </div>
+      
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?adec00eac37a4f07fb02d0f478140978";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

