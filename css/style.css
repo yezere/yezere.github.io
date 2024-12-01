@@ -482,6 +482,7 @@ body {
   color: #c9cacc;
   font-weight: 400;
   font-size: 14px;
+  letter-spacing: 1px;
   font-family: "Menlo", "Meslo LG", monospace;
   line-height: 1.725;
   text-rendering: geometricPrecision;
@@ -572,7 +573,7 @@ body {
   }
 }
 .max-width {
-  max-width: 48rem;
+  max-width: 50%;
 }
 @media (max-width: 480px) {
   .px3 {
@@ -628,7 +629,7 @@ body {
   letter-spacing: 0.01em;
   font-weight: 200;
   font-style: normal;
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 #header #nav ul {
   margin: 0;
@@ -1585,9 +1586,9 @@ pre {
   padding-bottom: 0;
   border: 1px dotted #908d8d;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 14px;
   font-family: "Menlo", "Meslo LG", monospace;
-  line-height: 22px;
+  line-height: 1.725;
   -webkit-border-radius: 4px;
 }
 pre code {
