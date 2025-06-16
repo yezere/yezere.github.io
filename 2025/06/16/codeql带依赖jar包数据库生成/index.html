@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="codeql带依赖jar包数据库生成这个月听群友聊ai编程比较感兴趣，去试了试便宜的trae，首月3美元。玩了一会儿感觉不写点什么对不起这*3美元* 于是 https:&#x2F;&#x2F;github.com&#x2F;yezere&#x2F;codeql_n1ght 也顺便为了方便我使用codeql搭建数据库，毕竟每次手操做还是太累了。 以前也有师傅问过我怎么搭建带依赖的数据库，其实用ant去构建就行了，但是还是会报错 你就说数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="codeql带依赖jar包数据库生成">
+<meta property="og:url" content="http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/index.html">
+<meta property="og:site_name" content="N1ght">
+<meta property="og:description" content="codeql带依赖jar包数据库生成这个月听群友聊ai编程比较感兴趣，去试了试便宜的trae，首月3美元。玩了一会儿感觉不写点什么对不起这*3美元* 于是 https:&#x2F;&#x2F;github.com&#x2F;yezere&#x2F;codeql_n1ght 也顺便为了方便我使用codeql搭建数据库，毕竟每次手操做还是太累了。 以前也有师傅问过我怎么搭建带依赖的数据库，其实用ant去构建就行了，但是还是会报错 你就说数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-16T09:30:00.000Z">
+<meta property="article:modified_time" content="2025-06-16T09:38:52.323Z">
+<meta property="article:author" content="N1ght">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>codeql带依赖jar包数据库生成</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/links/">友链</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2024/12/07/qwb-final-dataease%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&text=codeql带依赖jar包数据库生成"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&is_video=false&description=codeql带依赖jar包数据库生成"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=codeql带依赖jar包数据库生成&body=Check out this article: http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&name=codeql带依赖jar包数据库生成&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&t=codeql带依赖jar包数据库生成"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90"><span class="toc-number">1.</span> <span class="toc-text">codeql带依赖jar包数据库生成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E4%B8%8B%E8%BD%BD%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6"><span class="toc-number">1.0.1.</span> <span class="toc-text">直接下载可执行文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="toc-number">1.0.2.</span> <span class="toc-text">命令行参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WAR-%E5%8C%85%E7%89%B9%E6%AE%8A%E5%A4%84%E7%90%86"><span class="toc-number">1.0.3.</span> <span class="toc-text">WAR 包特殊处理</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        codeql带依赖jar包数据库生成
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">N1ght</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-06-16T09:30:00.000Z" class="dt-published" itemprop="datePublished">2025-06-16</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/java/" rel="tag">java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="codeql带依赖jar包数据库生成"><a href="#codeql带依赖jar包数据库生成" class="headerlink" title="codeql带依赖jar包数据库生成"></a>codeql带依赖jar包数据库生成</h1><p>这个月听群友聊ai编程比较感兴趣，去试了试便宜的trae，首月3美元。玩了一会儿感觉不写点什么对不起这*<del>3美元</del>*</p>
+<p>于是</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/yezere/codeql_n1ght">https://github.com/yezere/codeql_n1ght</a></p>
+<p>也顺便为了方便我使用codeql搭建数据库，毕竟每次手操做还是太累了。</p>
+<p>以前也有师傅问过我怎么搭建带依赖的数据库，其实用ant去构建就行了，但是还是会报错 <del><em>你就说数据库搭建没搭建起来吧</em></del></p>
+<h3 id="直接下载可执行文件"><a href="#直接下载可执行文件" class="headerlink" title="直接下载可执行文件"></a>直接下载可执行文件</h3><p>从 <a target="_blank" rel="noopener" href="https://github.com/yezere/codeql_n1ght/releases">Releases</a> 页面下载对应平台的可执行文件。</p>
+<p>-h是帮助</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装所有必要工具（JDK、Apache Ant、CodeQL）</span></span><br><span class="line">./codeql_n1ght -install</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用自定义下载地址安装</span></span><br><span class="line">./codeql_n1ght -install -jdk https://your-jdk-url.zip -codeql https://your-codeql-url.zip</span><br></pre></td></tr></table></figure>
+
+<p>可以去指定工具版本的下载</p>
+<p>创建数据库</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 从 JAR 包创建数据库</span><br><span class="line">./codeql_n1ght -database your-app.jar</span><br><span class="line"></span><br><span class="line"># 从 WAR 包创建数据库</span><br><span class="line">./codeql_n1ght -database your-webapp.war</span><br><span class="line"></span><br><span class="line"># 指定反编译器类型</span><br><span class="line">./codeql_n1ght -database your-app.jar -decompiler fernflower</span><br><span class="line"></span><br><span class="line"># 反编译自己想要的lib，将jar包放入lib文件夹下，打包成zip</span><br><span class="line">./codeql_n1ght -database your-zip.zip</span><br></pre></td></tr></table></figure>
+
+<h3 id="命令行参数"><a href="#命令行参数" class="headerlink" title="命令行参数"></a>命令行参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>​<code>-install</code>​</td>
+<td>一键安装环境</td>
+<td>​<code>./codeql_n1ght -install</code>​</td>
+</tr>
+<tr>
+<td>​<code>-database</code>​</td>
+<td>指定要分析的 JAR&#x2F;WAR 文件</td>
+<td>​<code>./codeql_n1ght -database app.jar</code>​</td>
+</tr>
+<tr>
+<td>​<code>-decompiler</code>​</td>
+<td>选择反编译器 (procyon|fernflower)</td>
+<td>​<code>./codeql_n1ght -database app.jar -decompiler fernflower</code>​</td>
+</tr>
+<tr>
+<td>​<code>-jdk</code>​</td>
+<td>自定义 JDK 下载地址</td>
+<td>​<code>./codeql_n1ght -install -jdk https://example.com/jdk.zip</code>​</td>
+</tr>
+<tr>
+<td>​<code>-ant</code>​</td>
+<td>自定义 Apache Ant 下载地址</td>
+<td>​<code>./codeql_n1ght -install -ant https://example.com/ant.zip</code>​</td>
+</tr>
+<tr>
+<td>​<code>-codeql</code>​</td>
+<td>自定义 CodeQL 下载地址</td>
+<td>​<code>./codeql_n1ght -install -codeql https://example.com/codeql.zip</code>​</td>
+</tr>
+</tbody></table>
+<h3 id="WAR-包特殊处理"><a href="#WAR-包特殊处理" class="headerlink" title="WAR 包特殊处理"></a>WAR 包特殊处理</h3><p>本工具针对 WAR 包进行了特殊优化：</p>
+<ul>
+<li><strong>Spring Boot JAR&#x2F;WAR</strong>：自动处理 <code>BOOT-INF/classes</code>​ 和 <code>BOOT-INF/lib</code>​ 目录</li>
+<li><strong>传统 WAR</strong>：兼容处理 <code>WEB-INF/classes</code>​ 和 <code>WEB-INF/lib</code>​ 目录</li>
+<li><strong>JSP 文件</strong>：使用专用的 <code>jsp2class.jar</code>​ 进行反编译</li>
+<li><strong>智能路径检测</strong>：自动识别不同的 WAR 包结构</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/about/">关于</a></li>
+        
+          <li><a href="/search/">搜索</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a href="/links/">友链</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90"><span class="toc-number">1.</span> <span class="toc-text">codeql带依赖jar包数据库生成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E4%B8%8B%E8%BD%BD%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6"><span class="toc-number">1.0.1.</span> <span class="toc-text">直接下载可执行文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="toc-number">1.0.2.</span> <span class="toc-text">命令行参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WAR-%E5%8C%85%E7%89%B9%E6%AE%8A%E5%A4%84%E7%90%86"><span class="toc-number">1.0.3.</span> <span class="toc-text">WAR 包特殊处理</span></a></li></ol></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&text=codeql带依赖jar包数据库生成"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&is_video=false&description=codeql带依赖jar包数据库生成"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=codeql带依赖jar包数据库生成&body=Check out this article: http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&title=codeql带依赖jar包数据库生成"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&name=codeql带依赖jar包数据库生成&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/&t=codeql带依赖jar包数据库生成"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <ul>
+    
+      <!-- 不蒜子统计 -->
+      <span id="busuanzi_container_site_pv">
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+      </span>
+      <span class="post-meta-divider">|</span>
+      <span id="busuanzi_container_site_uv" style='display:none'>
+              本站访客数<span id="busuanzi_value_site_uv"></span>人
+      </span>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+  </ul>
+      <div class="footer-left">
+        Copyright &copy;
+        
+        
+        2024-2025
+        N1ght
+      </div>
+      <div class="footer-right">
+        <nav>
+          <ul>
+            <!--
+          --><li><a href="/">首页</a></li><!--
+        --><!--
+          --><li><a href="/about/">关于</a></li><!--
+        --><!--
+          --><li><a href="/search/">搜索</a></li><!--
+        --><!--
+          --><li><a href="/archives/">归档</a></li><!--
+        --><!--
+          --><li><a href="/links/">友链</a></li><!--
+        -->
+          </ul>
+        </nav>
+      </div>
+      
+</footer>
+
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?adec00eac37a4f07fb02d0f478140978";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
