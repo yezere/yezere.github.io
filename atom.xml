@@ -6,6 +6,12 @@
     <title>N1ght</title>
     <link>https://www.n1ght.cn/</link>
     
+    <image>
+      <url>https://www.n1ght.cn/images/logo.png</url>
+      <title>N1ght</title>
+      <link>https://www.n1ght.cn/</link>
+    </image>
+    
     <atom:link href="https://www.n1ght.cn/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
