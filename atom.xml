@@ -1,13 +1,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:webfeeds="http://webfeeds.org/rss/1.0">
 <SCRIPT id="allow-copy_script"/>
 <title>N1ght</title>
-
+<!-- 
 <icon>https://www.n1ght.cn/images/favicon.ico</icon>
-<image>https://www.n1ght.cn/images/favicon.ico</image>
- 
+  -->
 
-<logo>https://n1ght.cn/images/tx.png</logo>
- 
 
 <link href="https://www.n1ght.cn/atom.xml" rel="self"/>
 

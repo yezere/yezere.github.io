@@ -1,13 +1,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:webfeeds="http://webfeeds.org/rss/1.0">
 <SCRIPT id="allow-copy_script"/>
 <title>{{ config.title }}</title>
-{% if icon %}
+<!-- {% if icon %}
 <icon>{{ icon }}</icon>
-<image>{{ icon }}</image>
-{% endif %} 
-{% if config.feed.logo %}
-<logo>{{ config.feed.logo }}</logo>
-{% endif %} 
+{% endif %}  -->
+
 {% if config.description %}
 <subtitle>{{ config.description }}</subtitle>
 {% endif %}
