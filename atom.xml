@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>N1ght</title>
-  <icon>http://example.com/images/tx.jpg</icon>
+  <icon>https://www.n1ght.cn/images/tx.jpg</icon>
   
   <link href="http://example.com/atom.xml" rel="self"/>
   
