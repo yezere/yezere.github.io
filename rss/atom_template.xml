@@ -4,7 +4,11 @@
 {% if icon %}
 <icon>{{ icon }}</icon>
 <image>{{ icon }}</image>
-{% endif %} {% if config.description %}
+{% endif %} 
+{% if config.feed.logo %}
+<logo>{{ config.feed.logo }}</logo>
+{% endif %} 
+{% if config.description %}
 <subtitle>{{ config.description }}</subtitle>
 {% endif %}
 <link href="{{ feed_url | uriencode }}" rel="self"/>
