@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>N1ght</title>
-  <icon>https://www.n1ght.cn/images/favicon_32.ico</icon>
+  <icon>https://www.n1ght.cn/images/logo.png</icon>
   
   <link href="https://www.n1ght.cn/atom.xml" rel="self"/>
   
