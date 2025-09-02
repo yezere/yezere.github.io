@@ -2,18 +2,18 @@
 <SCRIPT id="allow-copy_script"/>
 <title>N1ght</title>
 
-<icon>https://n1ght.cn/images/favicon.ico</icon>
-<image>https://n1ght.cn/images/favicon.ico</image>
+<icon>https://www.n1ght.cn/images/favicon.ico</icon>
+<image>https://www.n1ght.cn/images/favicon.ico</image>
  
 
 <logo>https://n1ght.cn/images/tx.png</logo>
  
 
-<link href="https://n1ght.cn/atom.xml" rel="self"/>
+<link href="https://www.n1ght.cn/atom.xml" rel="self"/>
 
-<link href="https://n1ght.cn/"/>
+<link href="https://www.n1ght.cn/"/>
 <updated>2025-08-21T08:50:06.786Z</updated>
-<id>https://n1ght.cn/</id>
+<id>https://www.n1ght.cn/</id>
 
 <author>
 <name>N1ght</name>
@@ -29,8 +29,8 @@
 
 <entry>
 <title>高版本jdk+springboot链子</title>
-<link href="https://n1ght.cn/2025/08/21/%E9%AB%98%E7%89%88%E6%9C%ACjdk+springboot%E9%93%BE%E5%AD%90/"/>
-<id>https://n1ght.cn/2025/08/21/%E9%AB%98%E7%89%88%E6%9C%ACjdk+springboot%E9%93%BE%E5%AD%90/</id>
+<link href="https://www.n1ght.cn/2025/08/21/%E9%AB%98%E7%89%88%E6%9C%ACjdk+springboot%E9%93%BE%E5%AD%90/"/>
+<id>https://www.n1ght.cn/2025/08/21/%E9%AB%98%E7%89%88%E6%9C%ACjdk+springboot%E9%93%BE%E5%AD%90/</id>
 <published>2025-08-21T07:00:00.000Z</published>
 <updated>2025-08-21T08:50:06.786Z</updated>
 
@@ -45,8 +45,8 @@
 
 <entry>
 <title>blackhat-JDD-hessian反序列化jdk_fastjson链</title>
-<link href="https://n1ght.cn/2025/08/21/blackhat-JDD-hessian%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96jdk_fastjson%E9%93%BE/"/>
-<id>https://n1ght.cn/2025/08/21/blackhat-JDD-hessian%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96jdk_fastjson%E9%93%BE/</id>
+<link href="https://www.n1ght.cn/2025/08/21/blackhat-JDD-hessian%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96jdk_fastjson%E9%93%BE/"/>
+<id>https://www.n1ght.cn/2025/08/21/blackhat-JDD-hessian%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96jdk_fastjson%E9%93%BE/</id>
 <published>2025-08-21T06:00:00.000Z</published>
 <updated>2025-08-21T06:40:27.951Z</updated>
 
@@ -56,14 +56,14 @@
    
 <summary type="html">&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
 </entry>
 
 <entry>
 <title>Lilctf_blade_cc</title>
-<link href="https://n1ght.cn/2025/08/21/blade_cc/"/>
-<id>https://n1ght.cn/2025/08/21/blade_cc/</id>
+<link href="https://www.n1ght.cn/2025/08/21/blade_cc/"/>
+<id>https://www.n1ght.cn/2025/08/21/blade_cc/</id>
 <published>2025-08-21T06:00:00.000Z</published>
 <updated>2025-08-21T06:41:56.316Z</updated>
 
@@ -74,14 +74,14 @@
 <summary type="html">&lt;p&gt;这个题目的大部分链子存在博客里面：&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://www.n1ght.cn/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-colle</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
 </entry>
 
 <entry>
 <title>java_linux通用回显马</title>
-<link href="https://n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"/>
-<id>https://n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/</id>
+<link href="https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"/>
+<id>https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/</id>
 <published>2025-08-21T06:00:00.000Z</published>
 <updated>2025-08-21T06:41:43.104Z</updated>
 
@@ -92,14 +92,14 @@
 <summary type="html">&lt;p&gt;在LINUX环境下，可以通过文件描述符”&amp;#x2F;proc&amp;#x2F;self&amp;#x2F;fd&amp;#x2F;i”获取到网络连接，在java中我们可以直接通过文件描述符获取到一个Stream对象，对当前网络连接进行读写操作，可以釜底抽薪在根源上解决回显问题。&lt;/p&gt;
 &lt;p&gt;我</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
 </entry>
 
 <entry>
 <title>codeql带依赖jar包数据库生成</title>
-<link href="https://n1ght.cn/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/"/>
-<id>https://n1ght.cn/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/</id>
+<link href="https://www.n1ght.cn/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/"/>
+<id>https://www.n1ght.cn/2025/06/16/codeql%E5%B8%A6%E4%BE%9D%E8%B5%96jar%E5%8C%85%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90/</id>
 <published>2025-06-16T09:30:00.000Z</published>
 <updated>2025-06-16T09:38:52.323Z</updated>
 
@@ -109,14 +109,14 @@
    
 <summary type="html">&lt;h1 id=&quot;codeql带依赖jar包数据库生成&quot;&gt;&lt;a href=&quot;#codeql带依赖jar包数据库生成&quot; class=&quot;headerlink&quot; title=&quot;codeql带依赖jar包数据库生成&quot;&gt;&lt;/a&gt;codeql带依赖jar包数据库生成&lt;/h1&gt;&lt;p&gt;这个月听群友</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
 </entry>
 
 <entry>
 <title>qwb-final-dataease代码审计</title>
-<link href="https://n1ght.cn/2024/12/07/qwb-final-dataease%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
-<id>https://n1ght.cn/2024/12/07/qwb-final-dataease%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/</id>
+<link href="https://www.n1ght.cn/2024/12/07/qwb-final-dataease%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+<id>https://www.n1ght.cn/2024/12/07/qwb-final-dataease%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/</id>
 <published>2024-12-06T16:00:00.000Z</published>
 <updated>2024-12-07T15:15:21.848Z</updated>
 
@@ -131,8 +131,8 @@
 
 <entry>
 <title>NSSCTF刷题记录</title>
-<link href="https://n1ght.cn/2024/11/16/NSSCTF%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/"/>
-<id>https://n1ght.cn/2024/11/16/NSSCTF%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/</id>
+<link href="https://www.n1ght.cn/2024/11/16/NSSCTF%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/"/>
+<id>https://www.n1ght.cn/2024/11/16/NSSCTF%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/</id>
 <published>2024-11-16T10:00:00.000Z</published>
 <updated>2024-11-16T11:10:58.828Z</updated>
 
@@ -142,14 +142,14 @@
    
 <summary type="html">&lt;h1 id=&quot;NSSCTF刷题记录&quot;&gt;&lt;a href=&quot;#NSSCTF刷题记录&quot; class=&quot;headerlink&quot; title=&quot;NSSCTF刷题记录&quot;&gt;&lt;/a&gt;NSSCTF刷题记录&lt;/h1&gt;&lt;h2 id=&quot;11-9&quot;&gt;&lt;a href=&quot;#11-9&quot; class=&quot;head</summary>
     
-<category term="pwn" scheme="https://n1ght.cn/tags/pwn/"/>
+<category term="pwn" scheme="https://www.n1ght.cn/tags/pwn/"/>
 
 </entry>
 
 <entry>
 <title>SHCTF-ezjava</title>
-<link href="https://n1ght.cn/2024/11/09/SHCTF-ezjava/"/>
-<id>https://n1ght.cn/2024/11/09/SHCTF-ezjava/</id>
+<link href="https://www.n1ght.cn/2024/11/09/SHCTF-ezjava/"/>
+<id>https://www.n1ght.cn/2024/11/09/SHCTF-ezjava/</id>
 <published>2024-11-09T10:00:00.000Z</published>
 <updated>2024-11-09T13:57:31.224Z</updated>
 
@@ -160,14 +160,14 @@
 <summary type="html">&lt;p&gt;链尾来自于avss geekcon2024的old log，查找到一个链子去通往他，但是实例化成功了，无法查遍了Format都无法控制参数，于是手动patch了一个继承Format类使他的parseObject可控。&lt;/p&gt;
 &lt;p&gt;用codeql查询到漏洞利用链的过程就省略</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
 </entry>
 
 <entry>
 <title>nacos-0day分析</title>
-<link href="https://n1ght.cn/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/"/>
-<id>https://n1ght.cn/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/</id>
+<link href="https://www.n1ght.cn/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/"/>
+<id>https://www.n1ght.cn/2024/08/20/nacos-0day%E5%88%86%E6%9E%90/</id>
 <published>2024-08-20T10:00:00.000Z</published>
 <updated>2024-08-21T09:26:03.327Z</updated>
 
@@ -177,16 +177,16 @@
    
 <summary type="html">&lt;h2 id=&quot;首先下载&quot;&gt;&lt;a href=&quot;#首先下载&quot; class=&quot;headerlink&quot; title=&quot;首先下载&quot;&gt;&lt;/a&gt;首先下载&lt;/h2&gt;&lt;h3 id=&quot;poc&quot;&gt;&lt;a href=&quot;#poc&quot; class=&quot;headerlink&quot; title=&quot;poc&quot;&gt;&lt;/a&gt;po</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
-<category term="cve" scheme="https://n1ght.cn/tags/cve/"/>
+<category term="cve" scheme="https://www.n1ght.cn/tags/cve/"/>
 
 </entry>
 
 <entry>
 <title>2024ciscn-ezjava</title>
-<link href="https://n1ght.cn/2024/07/12/2024ciscn-ezjava/"/>
-<id>https://n1ght.cn/2024/07/12/2024ciscn-ezjava/</id>
+<link href="https://www.n1ght.cn/2024/07/12/2024ciscn-ezjava/"/>
+<id>https://www.n1ght.cn/2024/07/12/2024ciscn-ezjava/</id>
 <published>2024-07-12T13:00:00.000Z</published>
 <updated>2024-07-12T13:17:45.679Z</updated>
 
@@ -196,14 +196,14 @@
    
 <summary type="html">&lt;figure class=&quot;highlight c&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;li</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
 </entry>
 
 <entry>
 <title>geekcon-old_log</title>
-<link href="https://n1ght.cn/2024/04/25/geekcon-old_log/"/>
-<id>https://n1ght.cn/2024/04/25/geekcon-old_log/</id>
+<link href="https://www.n1ght.cn/2024/04/25/geekcon-old_log/"/>
+<id>https://www.n1ght.cn/2024/04/25/geekcon-old_log/</id>
 <published>2024-04-24T16:00:00.000Z</published>
 <updated>2024-04-24T16:43:12.919Z</updated>
 
@@ -214,14 +214,14 @@
 <summary type="html">&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yezere/images/master/Pasted%20image%2020240422014918.png&quot;&gt;&lt;/p&gt;
 &lt;h2 id=&quot;jdk1-8，jdk11&quot;&gt;&lt;a href=</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
 </entry>
 
 <entry>
 <title>java反序列化漏洞commons-collections-TransformedList触发transform</title>
-<link href="https://n1ght.cn/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/"/>
-<id>https://n1ght.cn/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/</id>
+<link href="https://www.n1ght.cn/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/"/>
+<id>https://www.n1ght.cn/2024/04/17/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Ecommons-collections-TransformedList%E8%A7%A6%E5%8F%91transform/</id>
 <published>2024-04-17T09:11:32.000Z</published>
 <updated>2024-04-27T12:49:59.005Z</updated>
 
@@ -231,16 +231,16 @@
    
 <summary type="html">&lt;p&gt;所用到的类java原生类和common-collections类&lt;br&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yezere/images/master/cc.jpg&quot;&gt;&lt;br&gt;jdk版本是&lt;br&gt;jdk1.8.0_162&lt;b</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
-<category term="ctf-trick" scheme="https://n1ght.cn/tags/ctf-trick/"/>
+<category term="ctf-trick" scheme="https://www.n1ght.cn/tags/ctf-trick/"/>
 
 </entry>
 
 <entry>
 <title>2024阿里云ctf-web-chain17</title>
-<link href="https://n1ght.cn/2024/04/12/2024%E9%98%BF%E9%87%8C%E4%BA%91ctf-web-chain17%E5%AD%A6%E4%B9%A0/"/>
-<id>https://n1ght.cn/2024/04/12/2024%E9%98%BF%E9%87%8C%E4%BA%91ctf-web-chain17%E5%AD%A6%E4%B9%A0/</id>
+<link href="https://www.n1ght.cn/2024/04/12/2024%E9%98%BF%E9%87%8C%E4%BA%91ctf-web-chain17%E5%AD%A6%E4%B9%A0/"/>
+<id>https://www.n1ght.cn/2024/04/12/2024%E9%98%BF%E9%87%8C%E4%BA%91ctf-web-chain17%E5%AD%A6%E4%B9%A0/</id>
 <published>2024-04-12T11:30:23.000Z</published>
 <updated>2024-04-13T10:42:29.486Z</updated>
 
@@ -251,16 +251,16 @@
 <summary type="html">&lt;h2 id=&quot;agent&quot;&gt;&lt;a href=&quot;#agent&quot; class=&quot;headerlink&quot; title=&quot;agent&quot;&gt;&lt;/a&gt;agent&lt;/h2&gt;&lt;p&gt;jdk17依赖有h2思路清晰打jdbc attack&lt;/p&gt;
 &lt;figure class=&quot;highlight xm</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
-<category term="ctf" scheme="https://n1ght.cn/tags/ctf/"/>
+<category term="ctf" scheme="https://www.n1ght.cn/tags/ctf/"/>
 
 </entry>
 
 <entry>
 <title>ActiveMQ RCE 分析</title>
-<link href="https://n1ght.cn/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/"/>
-<id>https://n1ght.cn/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/</id>
+<link href="https://www.n1ght.cn/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/"/>
+<id>https://www.n1ght.cn/2024/04/10/ActiveMQ%20RCE%20%E5%88%86%E6%9E%90/</id>
 <published>2024-04-10T10:26:32.000Z</published>
 <updated>2024-04-27T12:51:42.193Z</updated>
 
@@ -270,16 +270,16 @@
    
 <summary type="html">&lt;p&gt;&lt;a href=&quot;https://github.com/apache/activemq/releases/tag/activemq-5.18.2&quot;&gt;activemq-5.18.2&lt;/a&gt;&lt;br&gt;漏洞环境&lt;br&gt;查看windows搭建&lt;br&gt;&lt;a href=&quot;https://</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
-<category term="cve" scheme="https://n1ght.cn/tags/cve/"/>
+<category term="cve" scheme="https://www.n1ght.cn/tags/cve/"/>
 
 </entry>
 
 <entry>
 <title>java反序列化UTF-8 Overlong Encoding</title>
-<link href="https://n1ght.cn/2024/04/09/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96UTF-8%20Overlong%20Encoding/"/>
-<id>https://n1ght.cn/2024/04/09/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96UTF-8%20Overlong%20Encoding/</id>
+<link href="https://www.n1ght.cn/2024/04/09/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96UTF-8%20Overlong%20Encoding/"/>
+<id>https://www.n1ght.cn/2024/04/09/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96UTF-8%20Overlong%20Encoding/</id>
 <published>2024-04-09T10:29:32.000Z</published>
 <updated>2024-04-27T12:51:04.799Z</updated>
 
@@ -289,16 +289,16 @@
    
 <summary type="html">&lt;p&gt;参考文章：&lt;br&gt;&lt;a href=&quot;https://www.leavesongs.com/PENETRATION/utf-8-overlong-encoding.html&quot;&gt;https://www.leavesongs.com/PENETRATION/utf-8-overl</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
-<category term="ctf-trick" scheme="https://n1ght.cn/tags/ctf-trick/"/>
+<category term="ctf-trick" scheme="https://www.n1ght.cn/tags/ctf-trick/"/>
 
 </entry>
 
 <entry>
 <title>Java魔法类：Unsafe应用解析</title>
-<link href="https://n1ght.cn/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/"/>
-<id>https://n1ght.cn/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/</id>
+<link href="https://www.n1ght.cn/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/"/>
+<id>https://www.n1ght.cn/2024/04/08/Java%E9%AD%94%E6%B3%95%E7%B1%BB%EF%BC%9AUnsafe%E5%BA%94%E7%94%A8%E8%A7%A3%E6%9E%90/</id>
 <published>2024-04-08T10:26:32.000Z</published>
 <updated>2024-04-27T12:52:14.012Z</updated>
 
@@ -309,9 +309,9 @@
 <summary type="html">&lt;p&gt;&lt;a href=&quot;https://tech.meituan.com/2019/02/14/talk-about-java-magic-class-unsafe.html&quot;&gt;引用文章&lt;/a&gt;&lt;/p&gt;
 &lt;h1 id=&quot;基本介绍&quot;&gt;&lt;a href=&quot;#基本介绍&quot; class=&quot;h</summary>
     
-<category term="java" scheme="https://n1ght.cn/tags/java/"/>
+<category term="java" scheme="https://www.n1ght.cn/tags/java/"/>
 
-<category term="ctf-trick" scheme="https://n1ght.cn/tags/ctf-trick/"/>
+<category term="ctf-trick" scheme="https://www.n1ght.cn/tags/ctf-trick/"/>
 
 </entry>
 
