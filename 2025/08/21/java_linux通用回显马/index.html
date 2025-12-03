@@ -9,7 +9,7 @@
     <meta name="description" content="在LINUX环境下，可以通过文件描述符”&#x2F;proc&#x2F;self&#x2F;fd&#x2F;i”获取到网络连接，在java中我们可以直接通过文件描述符获取到一个Stream对象，对当前网络连接进行读写操作，可以釜底抽薪在根源上解决回显问题。 我们怎么获取到tcp6的连接 获取到&#x2F;proc&#x2F;self&#x2F;net&#x2F;tcp6的inode 然后查看&amp;#x">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java_linux通用回显马">
-<meta property="og:url" content="http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/index.html">
+<meta property="og:url" content="https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/index.html">
 <meta property="og:site_name" content="N1ght">
 <meta property="og:description" content="在LINUX环境下，可以通过文件描述符”&#x2F;proc&#x2F;self&#x2F;fd&#x2F;i”获取到网络连接，在java中我们可以直接通过文件描述符获取到一个Stream对象，对当前网络连接进行读写操作，可以釜底抽薪在根源上解决回显问题。 我们怎么获取到tcp6的连接 获取到&#x2F;proc&#x2F;self&#x2F;net&#x2F;tcp6的inode 然后查看&amp;#x">
 <meta property="og:locale" content="zh_CN">
@@ -22,17 +22,17 @@
     
       
         
-          <link rel="shortcut icon" href="/images/favicon.ico">
+          <link rel="shortcut icon" href="/images/logo.png">
         
       
       
         
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          <link rel="icon" type="image/png" href="/images/logo.png" sizes="192x192">
         
       
       
         
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
         
       
     
@@ -53,6 +53,8 @@
     
     <!-- rss -->
     
+    
+      <link rel="alternate" href="/true" title="N1ght" type="application/atom+xml" />
     
 	<!-- mathjax -->
 	
@@ -77,6 +79,8 @@
        --><li><a href="/archives/">归档</a></li><!--
      --><!--
        --><li><a href="/links/">友链</a></li><!--
+     --><!--
+       --><li><a href="/atom/index.xml">rss订阅</a></li><!--
      -->
       </ul>
     </span>
@@ -100,17 +104,17 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&text=java_linux通用回显马"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&is_video=false&description=java_linux通用回显马"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=java_linux通用回显马&body=Check out this article: http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&name=java_linux通用回显马&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&t=java_linux通用回显马"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&text=java_linux通用回显马"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&is_video=false&description=java_linux通用回显马"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=java_linux通用回显马&body=Check out this article: https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&name=java_linux通用回显马&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&t=java_linux通用回显马"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -188,6 +192,8 @@
         
           <li><a href="/links/">友链</a></li>
         
+          <li><a href="/atom/index.xml">rss订阅</a></li>
+        
       </ul>
     </div>
 
@@ -196,17 +202,17 @@
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&text=java_linux通用回显马"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&is_video=false&description=java_linux通用回显马"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=java_linux通用回显马&body=Check out this article: http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&name=java_linux通用回显马&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&t=java_linux通用回显马"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&text=java_linux通用回显马"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&is_video=false&description=java_linux通用回显马"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=java_linux通用回显马&body=Check out this article: https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&title=java_linux通用回显马"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&name=java_linux通用回显马&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://www.n1ght.cn/2025/08/21/java_linux%E9%80%9A%E7%94%A8%E5%9B%9E%E6%98%BE%E9%A9%AC/&t=java_linux通用回显马"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -256,6 +262,8 @@
           --><li><a href="/archives/">归档</a></li><!--
         --><!--
           --><li><a href="/links/">友链</a></li><!--
+        --><!--
+          --><li><a href="/atom/index.xml">rss订阅</a></li><!--
         -->
           </ul>
         </nav>
